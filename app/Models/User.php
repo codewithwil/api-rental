@@ -11,16 +11,30 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
+
+    /**
+     * Mass assignable attributes.
+     */
     protected $fillable = [
-        'email', 'password', 'branch_id',
-        'last_login_ip', 'last_login_device', 'last_active_at'
+        'email',
+        'password',
+        'branch_id',
+        'last_login_ip',
+        'last_login_device',
+        'last_active_at',
     ];
 
+    /**
+     * Hidden attributes for arrays.
+     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
+    /**
+     * Casts for attributes.
+     */
     protected function casts(): array
     {
         return [
