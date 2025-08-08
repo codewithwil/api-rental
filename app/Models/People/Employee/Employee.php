@@ -3,9 +3,11 @@
 namespace App\Models\People\Employee;
 
 use App\{
+    Models\User,
     Traits\ActivityLogs,
-    Models\User
+    Models\Files\Files
 };
+
 
 use Illuminate\{
     Database\Eloquent\Model
@@ -24,6 +26,7 @@ class Employee extends Model
     ];
 
     public function user(){return $this->belongsTo(User::class, 'user_id', 'id');}
+    public function file(){return $this->morphOne(Files::class, 'fileable');}
     public function getGenderLabelAttribute()
     {
         $labels = [

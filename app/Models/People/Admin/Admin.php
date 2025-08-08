@@ -4,8 +4,10 @@ namespace App\Models\People\Admin;
 
 use App\{
     Models\User,
-    Traits\ActivityLogs
+    Traits\ActivityLogs,
+    Models\Files\Files
 };
+
 
 use Illuminate\{
     Database\Eloquent\Model
@@ -22,4 +24,5 @@ class Admin extends Model
 
     protected static function boot(){parent::boot();}
     public function user(){return $this->belongsTo(User::class, 'user_id', 'id');}
+    public function file(){return $this->morphOne(Files::class, 'fileable');}
 }

@@ -12,7 +12,7 @@ use Illuminate\{
 
 trait ActivityLogs
 {
-    public static function bootLogsActivity()
+    public static function bootActivityLogs()
     {
         static::created(function ($model) {
             $model->logActivity(ActivityLog::ACTION_CREATE);
