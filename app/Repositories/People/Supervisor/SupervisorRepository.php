@@ -6,18 +6,18 @@ use App\{
     Repositories\People\Supervisor\SupervisorRepositoryInterface,
     Models\People\Supervisor\Supervisor,
     Models\User,
-    Traits\HasFileUpload
+    Traits\HasFileUpload,
+    Traits\DbTransaction
 };
 
 use Illuminate\{
     Http\Request,
-    Support\Facades\DB,
     Support\Facades\Hash
 };
 
 class SupervisorRepository implements SupervisorRepositoryInterface
 {
-    use HasFileUpload;
+    use HasFileUpload, DbTransaction;
 
     public function getAll()
     {
@@ -31,7 +31,7 @@ class SupervisorRepository implements SupervisorRepositoryInterface
 
     public function store(Request $req)
     {
-        return DB::transaction(function () use ($req) {
+        return $this->runInTransaction(function () use ($req) {
             $user = User::create([
                 'email'    => $req->input('email'),
                 'password' => Hash::make($req->input('password')),

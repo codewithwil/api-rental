@@ -11,6 +11,8 @@ use App\{
     Repositories\People\Employee\EmployeeRepositoryInterface,
     Repositories\People\Supervisor\SupervisorRepository,
     Repositories\People\Supervisor\SupervisorRepositoryInterface,
+    Repositories\Resources\Category\CategoryRepository,
+    Repositories\Resources\Category\CategoryRepositoryInterface
 };
 
 use Illuminate\{
@@ -25,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AdminRepositoryInterface::class, AdminRepository::class);
         $this->app->bind(SupervisorRepositoryInterface::class, SupervisorRepository::class);
         $this->app->bind(EmployeeRepositoryInterface::class, EmployeeRepository::class);
+        $this->app->bind(CategoryRepositoryInterface::class, CategoryRepository::class);
     }
 
     public function boot(): void

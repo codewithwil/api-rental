@@ -5,18 +5,18 @@ namespace App\Repositories\People\Employee;
 use App\{
     Models\People\Employee\Employee,
     Models\User,
-    Traits\HasFileUpload
+    Traits\HasFileUpload,
+    Traits\DbTransaction
 };
 
 use Illuminate\{
     Http\Request,
-    Support\Facades\DB,
     Support\Facades\Hash
 };
 
 class EmployeeRepository implements EmployeeRepositoryInterface
 {
-    use HasFileUpload;
+    use HasFileUpload, DbTransaction;
 
     public function getAll()
     {
@@ -30,7 +30,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
 
     public function store(Request $req)
     {
-        return DB::transaction(function () use ($req) {
+        return $this->runInTransaction(function () use ($req) {
             $user = User::create([
                 'email'    => $req->input('email'),
                 'password' => Hash::make($req->input('password')),

@@ -5,18 +5,17 @@ namespace App\Repositories\People\Admin;
 use App\{
     Models\People\Admin\Admin,
     Models\User,
-    Traits\HasFileUpload
+    Traits\HasFileUpload,
+    Traits\DbTransaction
 };
-
 use Illuminate\{
     Http\Request,
-    Support\Facades\DB,
     Support\Facades\Hash
 };
 
 class AdminRepository implements AdminRepositoryInterface
 {
-    use HasFileUpload;
+    use HasFileUpload, DbTransaction;
 
     public function getAll()
     {
@@ -30,7 +29,7 @@ class AdminRepository implements AdminRepositoryInterface
 
     public function store(Request $req)
     {
-        return DB::transaction(function () use ($req) {
+        return $this->runInTransaction(function () use ($req) {
             $user = User::create([
                 'email'    => $req->input('email'),
                 'password' => Hash::make($req->input('password')),
