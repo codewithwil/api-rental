@@ -13,10 +13,7 @@ use Illuminate\{
 
 class AuthC extends Controller
 {
-    public function __construct(protected AuthService $auth)
-    {
-        $this->auth = $auth;
-    }
+    public function __construct(protected AuthService $auth){}
 
     public function login(Request $request)
     {
