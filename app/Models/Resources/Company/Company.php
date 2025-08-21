@@ -5,6 +5,7 @@ namespace App\Models\Resources\Company;
 use App\{
     Traits\ActivityLogs,
     Models\Resources\Branch\Branch,
+    Models\Files\Files
 };
 
 use Illuminate\{
@@ -17,8 +18,9 @@ class Company extends Model
     protected $table           = 'companies';
     protected $primaryKey      = 'companyId';
     protected $fillable        = [
-        'companyId','image','name', 'web'
+        'companyId','name', 'web', 'phone', 'address'
     ];
 
     public function branch(){return $this->hasOne(Branch::class, 'company_id', 'companyId');}
+    public function file(){return $this->morphOne(Files::class, 'fileable');}
 }

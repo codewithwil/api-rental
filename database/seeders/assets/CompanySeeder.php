@@ -17,9 +17,10 @@ class CompanySeeder extends Seeder
         $companies = [
             [
                 'companyId' => 1,
-                'image'     => 'company1.png',
                 'name'      => 'Rentalku',
                 'web'       => 'https://nusantaratech.co.id',
+                'phone'     => "023123232",
+                'address'   => 'Rentalku',
             ],
         ];
 

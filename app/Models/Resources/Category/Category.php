@@ -3,7 +3,8 @@
 namespace App\Models\Resources\Category;
 
 use App\{
-    Traits\ActivityLogs
+    Traits\ActivityLogs,
+    Models\Resources\Vehicle\Vehicle
 };
 
 use Illuminate\{
@@ -22,4 +23,6 @@ class Category extends Model
     protected $fillable   = [
         'name', 'type','status'
     ];
+
+    public function vehicle(){return $this->hasMany(Vehicle::class, 'category_id', 'categoryId');}
 }

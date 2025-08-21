@@ -2,9 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use App\{
+    Models\People\Admin\Admin,
+    Models\People\Employee\Employee,
+    Models\People\Supervisor\Supervisor,
+    Models\Resources\Vehicle\Vehicle
+};
+
+use Illuminate\{
+    Database\Eloquent\Factories\HasFactory,
+    Foundation\Auth\User as Authenticatable,
+    Notifications\Notifiable,
+};
+
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -26,8 +36,8 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    // public function admin(){return $this->hasOne(Admin::class, 'user_id');}
-    // public function supervisor(){return $this->hasOne(Supervisor::class, 'user_id');}
-    // public function employee(){return $this->hasOne(Employee::class, 'user_id');}
-    // public function member(){return $this->hasOne(Member::class, 'user_id');}
+    public function admin(){return $this->hasOne(Admin::class, 'user_id');}
+    public function supervisor(){return $this->hasOne(Supervisor::class, 'user_id');}
+    public function employee(){return $this->hasOne(Employee::class, 'user_id');}
+    public function vehicle(){return $this->hasMany(Vehicle::class, 'user_id');}
 }

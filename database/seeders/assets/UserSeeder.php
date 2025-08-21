@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
      public function run(): void
     {
         $lestariBranch = DB::table('branches')->where('email', 'lestari@branch.com')->first();
-        $kompakBranch = DB::table('branches')->where('email', 'kompak@branch.com')->first();
+        $kompakBranch  = DB::table('branches')->where('email', 'kompak@branch.com')->first();
 
         $password  = Hash::make('admin123'); 
         $password1 = Hash::make('supervisor123'); 
@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
         Admin::create([
             'user_id' => $adminUser->id,
             'name'    => 'Admin Utama',
-            'phone' => '08123456789',
+            'phone'   => '08123456789',
         ]);
         
         
@@ -66,7 +66,7 @@ class UserSeeder extends Seeder
         Employee::create([
             'user_id'    => $petugasUser->id,
             'name'       => 'petugas mantap',
-            'phone'    => '08123456789',
+            'phone'      => '08123456789',
             'address'    => 'jalan doang ga jadian',
             'birthdate'  => '1990-01-01', 
             'hire_date'  => '2025-04-15', 

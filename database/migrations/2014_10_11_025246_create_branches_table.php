@@ -16,6 +16,7 @@ return new class extends Migration
                 $table->engine = "InnoDB";
                 $table->id('branchId');
                 $table->unsignedBigInteger('company_id');
+                $table->string('branchName', 75);
                 $table->text('address');
                 $table->string('email', 75)->unique();
                 $table->string('operationalHours', 50);    
