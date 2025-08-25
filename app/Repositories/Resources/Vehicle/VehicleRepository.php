@@ -6,7 +6,8 @@ use App\{
     Repositories\Resources\Vehicle\VehicleRepositoryInterface,
     Models\Resources\Vehicle\Vehicle,
     Traits\DbTransaction,
-    Traits\HasFileUpload
+    Traits\HasFileUpload,
+    Models\Resources\Vehicle\VehicleDepreciat
 };
 
 use Illuminate\{
@@ -51,6 +52,13 @@ class VehicleRepository implements VehicleRepositoryInterface
                 $this->uploadFile($req->file('photo'), $vehicle, 'public', 'images/vehicle');
             }
 
+            VehicleDepreciat::create([
+                'vehicle_id'          => $vehicle->vehicleId,
+                'year'                => $vehicle->year,
+                'book_value'          => $vehicle->acquisition_cost,
+                'depreciation_amount' => $vehicle->acquisition_cost,
+            ]);
+
             return $vehicle;
         });
     }
@@ -59,6 +67,7 @@ class VehicleRepository implements VehicleRepositoryInterface
     {
         return $this->runInTransaction(function () use ($req, $id) {
             $vehicle = Vehicle::findOrFail($id);
+
             $vehicle->update($req->only([
                 'user_id','branch_id','category_id','brand_id','name',
                 'plate_number','color','year','acquisition_cost','kir_expiry_date',
@@ -68,9 +77,19 @@ class VehicleRepository implements VehicleRepositoryInterface
             if ($req->hasFile('photo')) {
                 $this->uploadFile($req->file('photo'), $vehicle, 'public', 'images/vehicle');
             }
+
+            VehicleDepreciat::updateOrCreate(
+                ['vehicle_id' => $vehicle->vehicleId, 'year' => $vehicle->year],
+                [
+                    'book_value'          => $vehicle->acquisition_cost,
+                    'depreciation_amount' => $vehicle->acquisition_cost
+                ]
+            );
+
             return $vehicle;
         });
     }
+
 
     public function delete($id)
     {

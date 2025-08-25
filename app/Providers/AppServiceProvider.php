@@ -24,7 +24,9 @@ use App\{
     Repositories\Resources\Branch\BranchRepository,
     Repositories\Resources\Branch\BranchRepositoryInterface,
     Repositories\Resources\Vehicle\VehicleRepository,
-    Repositories\Resources\Vehicle\VehicleRepositoryInterface
+    Repositories\Resources\Vehicle\VehicleRepositoryInterface,
+    Repositories\Resources\VehicleDepreciate\VehicleDepreciateRepository,
+    Repositories\Resources\VehicleDepreciate\VehicleDepreciateRepositoryInterface
 };
 
 use Illuminate\{
@@ -46,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(RulesRepositoryInterface::class, RulesRepository::class);
         $this->app->bind(BranchRepositoryInterface::class, BranchRepository::class);
         $this->app->bind(VehicleRepositoryInterface::class, VehicleRepository::class);
+        $this->app->bind(VehicleDepreciateRepositoryInterface::class, VehicleDepreciateRepository::class);
     }
 
     public function boot(): void
