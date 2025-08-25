@@ -51,7 +51,6 @@ class CategoryRepository implements CategoryRepositoryInterface
         return $this->runInTransaction(function () use ($req, $id) {
             $category = Category::findOrFail($id);
             $category->update($req->only(['name', 'type']));
-            $category->category->save();
             return $category;
         });
     }
