@@ -19,7 +19,10 @@ class VehicleRepository implements VehicleRepositoryInterface
     use DbTransaction, HasFileUpload;
     public function getAll()
     {
-        return Vehicle::with(['file','user','brand','branch','category'])
+        return Vehicle::with([
+            'file', 'user.admin','user.employee',
+            'user.supervisor','brand','branch','category'
+            ])
                         ->where('status', '!=', Vehicle::STATUS_DELETED)
                         ->get();
     }
