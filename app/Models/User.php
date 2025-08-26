@@ -6,7 +6,8 @@ use App\{
     Models\People\Admin\Admin,
     Models\People\Employee\Employee,
     Models\People\Supervisor\Supervisor,
-    Models\Resources\Vehicle\Vehicle
+    Models\Resources\Vehicle\Vehicle,
+    Models\History\Activity\ActivityLog
 };
 
 use Illuminate\{
@@ -40,4 +41,5 @@ class User extends Authenticatable
     public function supervisor(){return $this->hasOne(Supervisor::class, 'user_id');}
     public function employee(){return $this->hasOne(Employee::class, 'user_id');}
     public function vehicle(){return $this->hasMany(Vehicle::class, 'user_id');}
+    public function activityLog(){return $this->hasMany(ActivityLog::class, 'user_id');}
 }

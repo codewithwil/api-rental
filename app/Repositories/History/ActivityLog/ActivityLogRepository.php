@@ -10,6 +10,6 @@ class ActivityLogRepository implements ActivityLogRepositoryInterface
 {
     public function getAll()
     {
-        return ActivityLog::get();
+        return ActivityLog::with('user')->get();
     }
 }
