@@ -26,7 +26,9 @@ use App\{
     Repositories\Resources\Vehicle\VehicleRepository,
     Repositories\Resources\Vehicle\VehicleRepositoryInterface,
     Repositories\Resources\VehicleDepreciate\VehicleDepreciateRepository,
-    Repositories\Resources\VehicleDepreciate\VehicleDepreciateRepositoryInterface
+    Repositories\Resources\VehicleDepreciate\VehicleDepreciateRepositoryInterface,
+    Repositories\History\ActivityLog\ActivityLogRepository,
+    Repositories\History\ActivityLog\ActivityLogRepositoryInterface
 };
 
 use Illuminate\{
@@ -49,6 +51,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BranchRepositoryInterface::class, BranchRepository::class);
         $this->app->bind(VehicleRepositoryInterface::class, VehicleRepository::class);
         $this->app->bind(VehicleDepreciateRepositoryInterface::class, VehicleDepreciateRepository::class);
+        $this->app->bind(ActivityLogRepositoryInterface::class, ActivityLogRepository::class);
     }
 
     public function boot(): void
