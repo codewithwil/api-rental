@@ -6,5 +6,5 @@ use Illuminate\Http\Request;
 
 interface ActivityLogRepositoryInterface
 {
-    public function getAll();
+    public function getAll($perPage = 10);
 }

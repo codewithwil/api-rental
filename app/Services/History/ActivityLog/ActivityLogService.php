@@ -13,10 +13,12 @@ class ActivityLogService
 
     public function __construct(protected ActivityLogRepositoryInterface $activityLog) {}
 
-    public function index()
+    public function index($perPage = 10)
     {
+        $logs = $this->activityLog->getAll($perPage);
+
         return $this->successResponse([
-            'activityLog' => $this->activityLog->getAll()
+            'activityLog' => $logs
         ]);
     }
 }

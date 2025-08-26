@@ -8,8 +8,8 @@ use App\{
 
 class ActivityLogRepository implements ActivityLogRepositoryInterface
 {
-    public function getAll()
+    public function getAll($perPage = 10)
     {
-        return ActivityLog::with('user')->get();
+        return ActivityLog::with('user')->latest()->paginate($perPage);
     }
 }
