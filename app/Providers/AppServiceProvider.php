@@ -31,7 +31,7 @@ use App\{
     Repositories\History\ActivityLog\ActivityLogRepositoryInterface,
     Repositories\Report\WeeklyReport\WeeklyReportRepository,
     Repositories\Report\WeeklyReport\WeeklyReportRepositoryInterface,
-    Repositories\Resources\VehicleDepreciate\RentCarRepository,
+    Repositories\Transactions\RentCar\RentCarRepository,
     Repositories\Transactions\RentCar\RentCarRepositoryInterface
 };
 

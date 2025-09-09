@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Resources\VehicleDepreciate;
+namespace App\Repositories\Transactions\RentCar;
 
 use App\{
     Repositories\Transactions\RentCar\RentCarRepositoryInterface,
@@ -52,7 +52,7 @@ class RentCarRepository implements RentCarRepositoryInterface
 
             $start = Carbon::parse($req->input('startDate'));
             $end   = Carbon::parse($req->input('endDate'));
-            $days  = $start->diffInDays($end) + 1; 
+            $days  = $start->diffInDays($end); 
             $total = $days * $req->input('pricePerDay');
 
             PaymentAmount::create([
@@ -89,7 +89,7 @@ class RentCarRepository implements RentCarRepositoryInterface
 
             $start   = Carbon::parse($rentCar->startDate);
             $end     = Carbon::parse($rentCar->endDate);
-            $days    = $start->diffInDays($end) + 1; 
+            $days    = $start->diffInDays($end); 
             $total   = $days * $rentCar->pricePerDay;
             $payment = PaymentAmount::where('payable_id', $rentCar->rentCarId)
                 ->where('payable_type', RentCar::class)

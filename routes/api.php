@@ -16,6 +16,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::group(["prefix" => "/people", "as" => "people."], __DIR__ . "/api/people/index.php");
     Route::group(["prefix" => "/resources", "as" => "resources."], __DIR__ . "/api/resources/index.php");
     Route::group(["prefix" => "/report", "as" => "report."], __DIR__ . "/api/report/index.php");
+    Route::group(["prefix" => "/transactions", "as" => "transactions."], __DIR__ . "/api/transactions/index.php");
     Route::group(["prefix" => "/history", "as" => "history."], __DIR__ . "/api/history/index.php");
 });
 //
