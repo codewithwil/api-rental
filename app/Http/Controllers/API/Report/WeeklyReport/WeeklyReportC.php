@@ -1,24 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\API\Resources\Vehicle;
+namespace App\Http\Controllers\API\Report\WeeklyReport;
 
 use App\{
     Http\Controllers\Controller,
-    Services\Resources\Vehicle\VehicleService
+    Services\Report\WeeklyReport\WeeklyReportService
 };
 
 use Illuminate\{
     Http\Request
 };
 
-class VehicleC extends Controller
+class WeeklyReportC extends Controller
 {
-    public function __construct(protected VehicleService $service) {}
+    public function __construct(protected WeeklyReportService $service) {}
 
     public function index() { return $this->service->index(); }
-    public function selected() { return $this->service->selected(); }
     public function show($id) { return $this->service->show($id); }
     public function store(Request $req) { return $this->service->store($req); }
     public function update(Request $req, $id) { return $this->service->update($req, $id); }
-    public function delete($id) { return $this->service->delete($id); }
+    public function destroy($id) { return $this->service->delete($id); }
 }

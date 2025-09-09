@@ -24,6 +24,13 @@ class VehicleService
             'vehicles' => $this->vehicleRepo->getAll()
         ]);
     }
+    
+    public function selected()
+    {
+        return $this->successResponse([
+            'vehicles' => $this->vehicleRepo->getSelected()
+        ]);
+    }
 
     public function show($id)
     {

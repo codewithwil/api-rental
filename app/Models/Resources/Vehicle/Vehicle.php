@@ -8,7 +8,8 @@ use App\{
     Models\Resources\Category\Category,
     Models\User,
     Traits\ActivityLogs,
-    Models\Files\Files
+    Models\Files\Files,
+    Models\Report\WeeklyReport\WeeklyReport
 };
 
 use Illuminate\{
@@ -22,6 +23,7 @@ class Vehicle extends Model
     const STATUS_INACTIVE = 1;
     const STATUS_ACTIVE   = 2;
     const STATUS_REPAIR   = 3;
+    const STATUS_RENT     = 4;
     protected $table      = 'vehicles';
     protected $primaryKey = 'vehicleId';
     protected $fillable   = [
@@ -37,6 +39,7 @@ class Vehicle extends Model
     public function Brand(){return $this->belongsTo(Brand::class, 'brand_id', 'brandId');}
     public function vehicleDepreciat(){return $this->belongsTo(VehicleDepreciat::class, 'vehicle_id', 'vehicleId');}
     public function file(){return $this->morphOne(Files::class, 'fileable');}
+    public function weeklyReport(){return $this->hasMany(WeeklyReport::class, 'vehcile_id', 'vehicleId');}
     public function getStatusLabelAttribute()
     {
         $labels = [
@@ -44,6 +47,7 @@ class Vehicle extends Model
             self::STATUS_INACTIVE => 'Tidak aktif',
             self::STATUS_ACTIVE   => 'Aktif',
             self::STATUS_REPAIR   => 'Perbaikan',
+            self::STATUS_RENT     => 'Disewa',
         ];
     
         return $labels[$this->status] ?? 'Tidak Diketahui';

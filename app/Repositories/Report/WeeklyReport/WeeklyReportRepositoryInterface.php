@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Repositories\Resources\Vehicle;
+namespace App\Repositories\Report\WeeklyReport;
 
 use Illuminate\Http\Request;
 
-interface VehicleRepositoryInterface
+interface WeeklyReportRepositoryInterface
 {
     public function getAll();
-    public function getSelected();
     public function find($id);
     public function store(Request $req);
     public function update(Request $req, $id);

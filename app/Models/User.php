@@ -7,7 +7,8 @@ use App\{
     Models\People\Employee\Employee,
     Models\People\Supervisor\Supervisor,
     Models\Resources\Vehicle\Vehicle,
-    Models\History\Activity\ActivityLog
+    Models\History\Activity\ActivityLog,
+    Models\Report\WeeklyReport\WeeklyReport
 };
 
 use Illuminate\{
@@ -42,4 +43,5 @@ class User extends Authenticatable
     public function employee(){return $this->hasOne(Employee::class, 'user_id');}
     public function vehicle(){return $this->hasMany(Vehicle::class, 'user_id');}
     public function activityLog(){return $this->hasMany(ActivityLog::class, 'user_id');}
+    public function weeklyReport(){return $this->hasMany(WeeklyReport::class, 'user_id');}
 }

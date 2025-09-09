@@ -23,8 +23,17 @@ class VehicleRepository implements VehicleRepositoryInterface
             'file', 'user.admin','user.employee',
             'user.supervisor','brand','branch','category'
             ])
-                        ->where('status', '!=', Vehicle::STATUS_DELETED)
-                        ->get();
+            ->where('status', '!=', Vehicle::STATUS_DELETED)
+            ->get();
+    }
+
+    public function getSelected(){
+          return Vehicle::with([
+            'file', 'user.admin','user.employee',
+            'user.supervisor','brand','branch','category'
+            ])
+            ->whereNotIn('status', [Vehicle::STATUS_DELETED, Vehicle::STATUS_RENT])
+            ->get();
     }
 
     public function find($id)
