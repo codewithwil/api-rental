@@ -24,7 +24,7 @@ class RentCarRepository implements RentCarRepositoryInterface
 
     public function getAll()
     {
-        return RentCar::with(['vehicle'])->get();
+        return RentCar::with(['vehicle', 'paymentAmount'])->get();
     }
 
     public function find($id)
