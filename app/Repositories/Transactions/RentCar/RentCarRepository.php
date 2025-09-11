@@ -44,6 +44,7 @@ class RentCarRepository implements RentCarRepositoryInterface
                 'startDate'        => $req->input('startDate'),
                 'endDate'          => $req->input('endDate'),
                 'pricePerDay'      => $req->input('pricePerDay'),
+                'penalty'          => $req->input('penalty'),
                 'notes'            => $req->input('notes'),
             ]);
             
@@ -76,7 +77,7 @@ class RentCarRepository implements RentCarRepositoryInterface
 
             $rentCar->update($req->only([
                 'vehicle_id','renter_name','renter_address','renter_phone',
-                'startDate', 'endDate', 'pricePerDay', 'notes',
+                'startDate', 'endDate', 'pricePerDay', 'penalty','notes',
             ]));
 
             if ($oldVehicleId != $newVehicleId) {

@@ -45,6 +45,7 @@ class RentCarService
             'startDate'      => 'required|date|before_or_equal:endDate',
             'endDate'        => 'required|date|after_or_equal:startDate',
             'pricePerDay'    => 'required|numeric|min:0',
+            'penalty'        => 'required|numeric|min:0',
             'notes'          => 'nullable|string',
         ]);
 
@@ -70,6 +71,7 @@ class RentCarService
             'startDate'      => 'sometimes|date|before_or_equal:endDate',
             'endDate'        => 'sometimes|date|after_or_equal:startDate',
             'pricePerDay'    => 'sometimes|numeric|min:0',
+            'penalty'        => 'sometimes|numeric|min:0',
             'notes'          => 'nullable|string',
         ]);
 
