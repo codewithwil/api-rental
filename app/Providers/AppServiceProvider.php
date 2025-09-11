@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\{
     Repositories\Auth\AuthRepository,
     Repositories\Auth\AuthRepositoryInterface,
+    Repositories\Dashboard\DashboardRepository,
+    Repositories\Dashboard\DashboardRepositoryInterface,
     Repositories\People\AllPeople\AllPeopleRepository,
     Repositories\People\AllPeople\AllPeopleRepositoryInterface,
     Repositories\People\Admin\AdminRepository,
@@ -44,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
+        $this->app->bind(DashboardRepositoryInterface::class, DashboardRepository::class);
         $this->app->bind(AllPeopleRepositoryInterface::class, AllPeopleRepository::class);
         $this->app->bind(AdminRepositoryInterface::class, AdminRepository::class);
         $this->app->bind(SupervisorRepositoryInterface::class, SupervisorRepository::class);
