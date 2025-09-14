@@ -39,7 +39,9 @@ class ReturnRentCarRepository implements ReturnRentCarRepositoryInterface
 
             if ($returnDate->greaterThan($endDate)) {
                 $lateDays = $endDate->diffInDays($returnDate);
-                $fine     = $lateDays * $rentCar->penalty;
+
+                $finePerDay = $rentCar->pricePerDay * ($rentCar->penalty / 100);
+                $fine       = $lateDays * $finePerDay;
             }
 
             $return = ReturnRentCar::create([
@@ -58,47 +60,67 @@ class ReturnRentCarRepository implements ReturnRentCarRepositoryInterface
                 $this->handleRelation($return, $req->type, $req->due_date ?? null);
             }
 
-            return $return->load(['payment', 'debt']);
+            return $return->load(['paymentAmount', 'debt']);
         });
     }
 
     public function update(Request $req, $id)
     {
         return $this->runInTransaction(function () use ($req, $id) {
-            $return = ReturnRentCar::with(['payment', 'debt'])->findOrFail($id);
+            $return     = ReturnRentCar::with(['rentCar', 'paymentAmount', 'debt'])->findOrFail($id);
+            $rentCar    = $return->rentCar;
+            $returnDate = $req->filled('return_date') 
+                ? Carbon::parse($req->return_date) 
+                : Carbon::parse($return->return_date);
 
-            $return->update($req->only([
-                'return_date', 'return_name', 'return_address', 'return_phone', 'notes'
-            ]));
+            $endDate  = Carbon::parse($rentCar->endDate);
+            $lateDays = 0;
+            $fine     = 0;
 
-            if ($return->fine <= 0 || !$req->has('type')) {
-                return $return;
+            if ($returnDate->greaterThan($endDate)) {
+                $lateDays = $endDate->diffInDays($returnDate);
+
+                $finePerDay = $rentCar->pricePerDay * ($rentCar->penalty / 100);
+                $fine       = $lateDays * $finePerDay;
             }
 
             $oldType = $return->type;
-            $newType = $req->type;
+
+            $return->update([
+                'return_date'    => $returnDate,
+                'return_name'    => $req->return_name ?? $return->return_name,
+                'return_address' => $req->return_address ?? $return->return_address,
+                'return_phone'   => $req->return_phone ?? $return->return_phone,
+                'notes'          => $req->notes ?? $return->notes,
+                'type'           => $req->type ?? $return->type,
+                'late_days'      => $lateDays,
+                'fine'           => $fine,
+            ]);
+
+            if ($fine <= 0 || !$req->has('type')) {
+                return $return->load(['paymentAmount', 'debt']);
+            }
+
+            $newType = (int) $req->type;
 
             if ($oldType !== $newType) {
-                $return->payment()?->delete();
+                $return->paymentAmount()?->delete();
                 $return->debt()?->delete();
-
                 $this->handleRelation($return, $newType, $req->due_date ?? null);
-                $return->update(['type' => $newType]);
-            } 
-            elseif ($newType == 2 && $req->filled('due_date')) {
+            } elseif ($newType == 2 && $req->filled('due_date')) {
                 $return->debt?->update([
                     'due_date' => Carbon::parse($req->due_date),
                 ]);
             }
 
-            return $return->load(['payment', 'debt']);
+            return $return->load(['paymentAmount', 'debt']);
         });
     }
 
     protected function handleRelation(ReturnRentCar $return, int $type, ?string $dueDate = null): void
     {
         if ($type === 1) {
-            $return->payment()->create([
+            $return->paymentAmount()->create([
                 'type'   => 1,
                 'amount' => $return->fine,
                 'status' => 1,
