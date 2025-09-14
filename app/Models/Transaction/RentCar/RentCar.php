@@ -7,7 +7,7 @@ use App\{
     Traits\ActivityLogs,
     Models\Transactions\Payment\PaymentAmount\PaymentAmount
 };
-
+use App\Models\Transactions\ReturnRentCar\ReturnRentCar;
 use Illuminate\{
     Database\Eloquent\Model
 };
@@ -30,4 +30,5 @@ class RentCar extends Model
     {
         return $this->morphMany(PaymentAmount::class, 'payable');
     }
+    public function returnRentCar(){return $this->hasMany(ReturnRentCar::class, 'rentCar_id', 'rentCarId');}
 }

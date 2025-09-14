@@ -34,7 +34,9 @@ use App\{
     Repositories\Report\WeeklyReport\WeeklyReportRepository,
     Repositories\Report\WeeklyReport\WeeklyReportRepositoryInterface,
     Repositories\Transactions\RentCar\RentCarRepository,
-    Repositories\Transactions\RentCar\RentCarRepositoryInterface
+    Repositories\Transactions\RentCar\RentCarRepositoryInterface,
+    Repositories\Transactions\ReturnRentCar\ReturnRentCarRepository,
+    Repositories\Transactions\ReturnRentCar\ReturnRentCarRepositoryInterface
 };
 
 use Illuminate\{
@@ -61,6 +63,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ActivityLogRepositoryInterface::class, ActivityLogRepository::class);
         $this->app->bind(WeeklyReportRepositoryInterface::class, WeeklyReportRepository::class);
         $this->app->bind(RentCarRepositoryInterface::class, RentCarRepository::class);
+        $this->app->bind(ReturnRentCarRepositoryInterface::class, ReturnRentCarRepository::class);
     }
 
     public function boot(): void
