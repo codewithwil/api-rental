@@ -25,7 +25,7 @@ class ReturnRentCarRepository implements ReturnRentCarRepositoryInterface
 
     public function find($id)
     {
-        return ReturnRentCar::with(['rentCar', 'paymentAmount', 'debt'])->findOrFail($id);
+        return ReturnRentCar::with(['rentCar.vehicle', 'paymentAmount', 'debt'])->findOrFail($id);
     }
 
     public function store(Request $req)
