@@ -45,7 +45,7 @@ class ReturnRentCarService
             'return_address' => 'required|string',
             'return_phone'   => 'required|string|max:20',
             'notes'          => 'nullable|string',
-            'type'           => 'required|in:1,2',
+            'type'           => 'nullable|in:1,2',
             'due_date'       => 'nullable|date|after:return_date',
         ]);
 
