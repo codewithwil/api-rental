@@ -20,7 +20,7 @@ class ReturnRentCarRepository implements ReturnRentCarRepositoryInterface
 
     public function getAll()
     {
-        return ReturnRentCar::with('rentCar')->get();
+        return ReturnRentCar::with('rentCar.vehicle')->get();
     }
 
     public function find($id)
