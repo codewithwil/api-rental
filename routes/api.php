@@ -19,4 +19,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::group(["prefix" => "/transactions", "as" => "transactions."], __DIR__ . "/api/transactions/index.php");
     Route::group(["prefix" => "/history", "as" => "history."], __DIR__ . "/api/history/index.php");
 });
-//
