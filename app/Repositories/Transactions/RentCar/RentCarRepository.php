@@ -9,7 +9,7 @@ use App\{
     Models\Resources\Vehicle\Vehicle,
     Models\Transactions\Payment\PaymentAmount\PaymentAmount
 };
-
+use App\Models\Transactions\Debt\Debt;
 use Illuminate\{
     Http\Request
 };
@@ -46,23 +46,35 @@ class RentCarRepository implements RentCarRepositoryInterface
                 'pricePerDay'      => $req->input('pricePerDay'),
                 'penalty'          => $req->input('penalty'),
                 'notes'            => $req->input('notes'),
+                'type'             => $req->input('type'), 
             ]);
-            
+
             Vehicle::where('vehicleId', $req->input('vehicle_id'))
                 ->update(['status' => Vehicle::STATUS_RENT]);
 
             $start = Carbon::parse($req->input('startDate'));
             $end   = Carbon::parse($req->input('endDate'));
-            $days  = $start->diffInDays($end) + 1; 
+            $days  = $start->diffInDays($end) + 1;
             $total = $days * $req->input('pricePerDay');
 
-            PaymentAmount::create([
-                'payable_id'   => $rentCar->rentCarId,
-                'payable_type' => RentCar::class,        
-                'type'         => PaymentAmount::TYPE_MASUK,
-                'amount'       => $total,
-                'status'       => PaymentAmount::STATUS_ACTIVE,
-            ]);
+            if ($rentCar->type == RentCar::TYPE_CASH) {
+                PaymentAmount::create([
+                    'payable_id'   => $rentCar->rentCarId,
+                    'payable_type' => RentCar::class,        
+                    'date'         => $rentCar->startDate,
+                    'type'         => PaymentAmount::TYPE_MASUK,
+                    'amount'       => $total,
+                    'status'       => PaymentAmount::STATUS_ACTIVE,
+                ]);
+            } elseif ($rentCar->type == RentCar::TYPE_HUTANG) {
+                Debt::create([
+                    'debtable_id'   => $rentCar->rentCarId,
+                    'debtable_type' => RentCar::class,
+                    'amount'        => $total,
+                    'due_date'      => Carbon::now()->addMonth(), 
+                    'status'        => 0, 
+                ]);
+            }
 
             return $rentCar;
         });
@@ -72,12 +84,13 @@ class RentCarRepository implements RentCarRepositoryInterface
     {
         return $this->runInTransaction(function () use ($req, $id) {
             $rentCar      = RentCar::findOrFail($id);
+            $oldType      = $rentCar->type; 
             $oldVehicleId = $rentCar->vehicle_id; 
             $newVehicleId = $req->input('vehicle_id');
 
             $rentCar->update($req->only([
                 'vehicle_id','renter_name','renter_address','renter_phone',
-                'startDate', 'endDate', 'pricePerDay', 'penalty','notes',
+                'startDate', 'endDate', 'pricePerDay', 'penalty','notes','type',
             ]));
 
             if ($oldVehicleId != $newVehicleId) {
@@ -90,21 +103,32 @@ class RentCarRepository implements RentCarRepositoryInterface
 
             $start   = Carbon::parse($rentCar->startDate);
             $end     = Carbon::parse($rentCar->endDate);
-            $days    = $start->diffInDays($end) + 1; 
+            $days    = $start->diffInDays($end) + 1;
             $total   = $days * $rentCar->pricePerDay;
-            $payment = PaymentAmount::where('payable_id', $rentCar->rentCarId)
-                ->where('payable_type', RentCar::class)
-                ->first();
 
-            if ($payment) {
-                $payment->update(['amount' => $total]);
-            } else {
-                PaymentAmount::create([
-                    'payable_id'   => $rentCar->rentCarId,
-                    'payable_type' => RentCar::class,
-                    'type'         => PaymentAmount::TYPE_MASUK,
-                    'amount'       => $total,
-                    'status'       => PaymentAmount::STATUS_ACTIVE,
+            if ($rentCar->type == RentCar::TYPE_CASH) {
+                $payment = PaymentAmount::where('payable_id', $rentCar->rentCarId)
+                    ->where('payable_type', RentCar::class)
+                    ->first();
+
+                if ($payment) {
+                    $payment->update(['amount' => $total]);
+                } else {
+                    PaymentAmount::create([
+                        'payable_id'   => $rentCar->rentCarId,
+                        'payable_type' => RentCar::class,
+                        'type'         => PaymentAmount::TYPE_MASUK,
+                        'amount'       => $total,
+                        'status'       => PaymentAmount::STATUS_ACTIVE,
+                    ]);
+                }
+            } elseif ($rentCar->type == RentCar::TYPE_HUTANG) {
+                Debt::create([
+                    'debtable_id'   => $rentCar->rentCarId,
+                    'debtable_type' => RentCar::class,
+                    'amount'        => $total,
+                    'due_date'      => Carbon::now()->addMonth(), 
+                    'status'        => 0, 
                 ]);
             }
 
@@ -119,8 +143,14 @@ class RentCarRepository implements RentCarRepositoryInterface
             $rentCar->status = RentCar::STATUS_INACTIVE;
             $rentCar->save();
             PaymentAmount::where('payable_id', $rentCar->rentCarId)
-            ->where('payable_type', RentCar::class)
-            ->update(['status' => PaymentAmount::STATUS_INACTIVE]);
+                ->where('payable_type', RentCar::class)
+                ->update(['status' => PaymentAmount::STATUS_INACTIVE]);
+            Debt::where('debtable_id', $rentCar->rentCarId)
+                            ->where('debtable_type', RentCar::class)
+                            ->delete();
+
+            Vehicle::where('vehicleId', $rentCar->vehicle_id)
+                ->update(['status' => Vehicle::STATUS_ACTIVE]); 
 
             return $rentCar;
         });

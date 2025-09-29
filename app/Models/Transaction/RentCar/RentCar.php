@@ -14,6 +14,8 @@ use Illuminate\{
 
 class RentCar extends Model
 {
+    const TYPE_CASH       = 1;
+    const TYPE_HUTANG     = 2;
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE   = 1;
     use ActivityLogs;
@@ -22,7 +24,7 @@ class RentCar extends Model
     protected $fillable   = [
         'vehicle_id','renter_name','renter_address',
         'renter_phone','startDate','endDate',
-        'pricePerDay','penalty','notes','status',
+        'pricePerDay','penalty','notes','type','status',
     ];
 
     public function vehicle(){return $this->belongsTo(Vehicle::class, 'vehicle_id', 'vehicleId');}

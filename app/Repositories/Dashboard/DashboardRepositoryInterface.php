@@ -10,5 +10,9 @@ interface DashboardRepositoryInterface
     public function countBranch();
     public function countVehicle();
     public function chartIncome(Request $req);
+    public function chartOutcome(Request $req);
     public function chartVehicleDepreciate(Request $req);
+    public function chartProfitLoss(Request $req);
+    public function chartReceivable(Request $req);
+    public function chartPayable(Request $req);
 }

@@ -1,21 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\API\Transactions\ReturnRentCar;
+namespace App\Http\Controllers\API\Transactions\Vehicle\VehicleRepair;
 
 use App\{
     Http\Controllers\Controller,
-    Services\Transactions\ReturnRentCar\ReturnRentCarService
+    Services\Transactions\Vehicle\VehicleRepair\VehicleRepairService
 };
 
 use Illuminate\{
     Http\Request
 };
 
-class ReturnRentCarC extends Controller
+class VehicleRepairC extends Controller
 {
-    public function __construct(protected ReturnRentCarService $service) {}
+    public function __construct(protected VehicleRepairService $service) {}
 
     public function index() { return $this->service->index(); }
+    public function getTypeApprove() { return $this->service->getTypeApprove(); }
+    public function updateStatus(Request $req, $id) { return $this->service->updateStatus($req, $id); }
     public function show($id) { return $this->service->show($id); }
     public function store(Request $req) { return $this->service->store($req); }
     public function update(Request $req, $id) { return $this->service->update($req, $id); }

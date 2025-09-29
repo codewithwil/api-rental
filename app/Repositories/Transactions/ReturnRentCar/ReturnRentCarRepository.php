@@ -7,7 +7,7 @@ use App\{
     Models\Transactions\ReturnRentCar\ReturnRentCar,
     Traits\DbTransaction
 };
-
+use App\Models\Resources\Vehicle\Vehicle;
 use Illuminate\{
     Http\Request
 };
@@ -55,6 +55,10 @@ class ReturnRentCarRepository implements ReturnRentCarRepositoryInterface
                 'fine'           => $fine,
                 'type'           => $req->type, 
             ]);
+
+            if ($rentCar->vehicle) {
+                $rentCar->vehicle->update(['status' => Vehicle::STATUS_ACTIVE]);
+            }
 
             if ($fine > 0 && $req->filled('type')) {
                 $this->handleRelation($return, $req->type, $req->due_date ?? null);
@@ -111,6 +115,11 @@ class ReturnRentCarRepository implements ReturnRentCarRepositoryInterface
                 $return->debt?->update([
                     'due_date' => Carbon::parse($req->due_date),
                 ]);
+            } elseif ($newType == 1 && $return->paymentAmount) {
+                $return->paymentAmount->update([
+                    'amount' => $fine,
+                    'date'   => $returnDate, 
+                ]);
             }
 
             return $return->load(['paymentAmount', 'debt']);
@@ -122,6 +131,7 @@ class ReturnRentCarRepository implements ReturnRentCarRepositoryInterface
         if ($type === 1) {
             $return->paymentAmount()->create([
                 'type'   => 1,
+                'date'   => $return->return_date, 
                 'amount' => $return->fine,
                 'status' => 1,
             ]);
@@ -139,9 +149,20 @@ class ReturnRentCarRepository implements ReturnRentCarRepositoryInterface
     public function delete($id)
     {
         return $this->runInTransaction(function () use ($id) {
-            $return = ReturnRentCar::findOrFail($id);
+            $return = ReturnRentCar::with(['paymentAmount', 'debt'])->findOrFail($id);
+
+            if ($return->paymentAmount) {
+                $return->paymentAmount()->delete();
+            }
+
+            if ($return->debt) {
+                $return->debt()->delete();
+            }
+
             $return->delete();
+
             return true;
         });
     }
+
 }

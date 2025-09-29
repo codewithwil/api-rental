@@ -23,6 +23,7 @@ return new class extends Migration
                 $table->decimal('pricePerDay', 12, 2); 
                 $table->decimal('penalty', 5, 2)->nullable(false);
                 $table->text('notes')->nullable(true);
+                $table->tinyInteger('type');
                 $table->tinyInteger('status')->default(0);
 
                 $table->timestamps();

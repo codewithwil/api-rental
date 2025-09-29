@@ -36,7 +36,13 @@ use App\{
     Repositories\Transactions\RentCar\RentCarRepository,
     Repositories\Transactions\RentCar\RentCarRepositoryInterface,
     Repositories\Transactions\ReturnRentCar\ReturnRentCarRepository,
-    Repositories\Transactions\ReturnRentCar\ReturnRentCarRepositoryInterface
+    Repositories\Transactions\ReturnRentCar\ReturnRentCarRepositoryInterface,
+    Repositories\Transactions\Vehicle\VehicleRepair\VehicleRepairRepository,
+    Repositories\Transactions\Vehicle\VehicleRepair\VehicleRepairRepositoryInterface,
+    Repositories\Transactions\Vehicle\VehicleRepairRealiz\VehicleRepairRealizRepository,
+    Repositories\Transactions\Vehicle\VehicleRepairRealiz\VehicleRepairRealizRepositoryInterface,
+    Repositories\Report\Kas\KasRepository,
+    Repositories\Report\Kas\KasRepositoryInterface,
 };
 
 use Illuminate\{
@@ -64,6 +70,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(WeeklyReportRepositoryInterface::class, WeeklyReportRepository::class);
         $this->app->bind(RentCarRepositoryInterface::class, RentCarRepository::class);
         $this->app->bind(ReturnRentCarRepositoryInterface::class, ReturnRentCarRepository::class);
+        $this->app->bind(VehicleRepairRepositoryInterface::class, VehicleRepairRepository::class);
+        $this->app->bind(VehicleRepairRealizRepositoryInterface::class, VehicleRepairRealizRepository::class);
+        $this->app->bind(KasRepositoryInterface::class, KasRepository::class);
     }
 
     public function boot(): void

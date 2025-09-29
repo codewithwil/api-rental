@@ -42,10 +42,35 @@ class DashboardService
         ]);
     }
 
+    public function chartOutcome(Request $req)
+    {
+        return $this->successResponse([
+            'outcome' => $this->dashboardRepo->chartOutcome($req)
+        ]);
+    }
+
     public function chartVehicleDepreciate(Request $req)
     {
         return $this->successResponse([
             'vehicle_depreciate' => $this->dashboardRepo->chartVehicleDepreciate($req)
+        ]);
+    }
+
+    public function chartProfitLoss(Request $req){
+        return $this->successResponse([
+            'outincome' => $this->dashboardRepo->chartProfitLoss($req)
+        ]);
+    }
+    
+    public function chartReceivable(Request $req){
+        return $this->successResponse([
+            'receivable' => $this->dashboardRepo->chartReceivable($req)
+        ]);
+    }
+
+    public function chartPayable(Request $req){
+        return $this->successResponse([
+            'payable' => $this->dashboardRepo->chartPayable($req)
         ]);
     }
 }

@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\API\Transactions\ReturnRentCar;
+namespace App\Http\Controllers\API\Transactions\Vehicle\VehicleRepairRealiz;
 
 use App\{
     Http\Controllers\Controller,
-    Services\Transactions\ReturnRentCar\ReturnRentCarService
+    Services\Transactions\Vehicle\VehicleRepairRealiz\VehicleRepairRealizService
 };
 
 use Illuminate\{
     Http\Request
 };
 
-class ReturnRentCarC extends Controller
+class VehicleRepairRealizC extends Controller
 {
-    public function __construct(protected ReturnRentCarService $service) {}
+    public function __construct(protected VehicleRepairRealizService $service) {}
 
     public function index() { return $this->service->index(); }
     public function show($id) { return $this->service->show($id); }
