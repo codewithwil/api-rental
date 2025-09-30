@@ -93,9 +93,9 @@ class VehicleRepairRealizRepository implements VehicleRepairRealizRepositoryInte
                 'status' => VehicleRepairRealiz::STATUS_INACTIVE,
             ]);
 
-            $vehicleRepairRealiz->paymentAmount()->update([
-                'status' => PaymentAmount::STATUS_INACTIVE,
-            ]);
+        $vehicleRepairRealiz->paymentAmount()->update([
+        'status' => PaymentAmount::STATUS_INACTIVE,
+        ]);
 
             return $vehicleRepairRealiz;
         });
