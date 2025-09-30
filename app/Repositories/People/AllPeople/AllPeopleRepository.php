@@ -6,8 +6,9 @@ use App\{
     Models\User
 };
 
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
+use Illuminate\{
+    Pagination\LengthAwarePaginator
+};
 
 class AllPeopleRepository implements AllPeopleRepositoryInterface
 {

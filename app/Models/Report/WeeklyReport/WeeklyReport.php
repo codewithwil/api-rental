@@ -29,7 +29,7 @@ class WeeklyReport extends Model
     public function user(){return $this->belongsTo(User::class, 'user_id');}
     public function vehicle(){return $this->belongsTo(Vehicle::class, 'vehicle_id');}
     public function weeklyReportDetail() {
-        return $this->hasMany(weeklyReportDetail::class, 'weekReport_id', 'weekReportId');
+        return $this->hasMany(WeeklyReportDetail::class, 'weekReport_id', 'weekReportId');
     }
 
     public function getStatusDescription():string
