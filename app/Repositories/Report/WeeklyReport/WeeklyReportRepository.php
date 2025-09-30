@@ -16,10 +16,36 @@ class WeeklyReportRepository implements WeeklyReportRepositoryInterface
 
     public function getAll()
     {
-        return WeeklyReport::with(['user','vehicle','weeklyReportDetail.file'])
-            ->where('status', '!=', WeeklyReport::STATUS_DELETED)
-            ->get();
+        $weeklyReports = WeeklyReport::with([
+            'user.employee', 
+            'user.admin', 
+            'vehicle', 
+            'weeklyReportDetail.file'
+        ])
+        ->where('status', '!=', WeeklyReport::STATUS_DELETED)
+        ->get();
+
+        return response()->json([
+            'status' => 200,
+            'success' => true,
+            'message' => 'Success',
+            'data' => [
+                'weeklyReports' => $weeklyReports->map(function($report){
+                    return [
+                        'weekReportId' => $report->weekReportId,
+                        'user_id' => $report->user_id,
+                        'user_name' => $report->userInfo(), 
+                        'vehicle_id' => $report->vehicle_id,
+                        'report_date' => $report->report_date,
+                        'note' => $report->note,
+                        'status' => $report->status,
+                        'weekly_report_detail' => $report->weeklyReportDetail,
+                    ];
+                }),
+            ]
+        ]);
     }
+
 
     public function find($id)
     {

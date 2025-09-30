@@ -57,4 +57,15 @@ class WeeklyReport extends Model
         ];    
         return $labels[$this->status] ?? 'Tidak Diketahui';
     }
+
+    public function userInfo()
+    {
+        if($this->user->employee) {
+            return $this->user->employee->name;
+        }
+        if($this->user->admin) {
+            return $this->user->admin->name;
+        }
+        return $this->user->email;
+    }
 }
