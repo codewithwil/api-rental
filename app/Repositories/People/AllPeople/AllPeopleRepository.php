@@ -6,14 +6,18 @@ use App\{
     Models\User
 };
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+
 class AllPeopleRepository implements AllPeopleRepositoryInterface
 {
+
     public function getAll()
     {
         $perPage = 10;
         $page = request()->get('page', 1);
 
-        $users = User::with(['roles'])->get();
+        $users = User::with('roles')->get();
 
         $mapped = $users->map(function ($user) {
             return [
@@ -25,11 +29,15 @@ class AllPeopleRepository implements AllPeopleRepositoryInterface
             ];
         });
 
-        $paginated = \Illuminate\Pagination\LengthAwarePaginator::make(
-            $mapped->forPage($page, $perPage),
-            $mapped->count(),
-            $perPage,
-            $page
+        
+        $currentPageItems = $mapped->forPage($page, $perPage);
+
+        $paginated = new LengthAwarePaginator(
+            $currentPageItems, 
+            $mapped->count(),         
+            $perPage,                 
+            $page,                    
+            ['path' => request()->url(), 'query' => request()->query()] 
         );
 
         return $paginated;
