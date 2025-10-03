@@ -9,6 +9,7 @@ use App\Models\Report\WeeklyReport\{
 use App\Models\Files\Files;
 use App\Traits\DbTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class WeeklyReportRepository implements WeeklyReportRepositoryInterface
 {
@@ -134,12 +135,20 @@ class WeeklyReportRepository implements WeeklyReportRepositoryInterface
     public function delete($id)
     {
         return $this->runInTransaction(function () use ($id) {
-            $weeklyReport         = WeeklyReport::findOrFail($id);
+            $weeklyReport = WeeklyReport::with('weeklyReportDetail.file')->findOrFail($id);
+            foreach ($weeklyReport->weeklyReportDetail as $detail) {
+                if ($detail->file) {
+                    Storage::disk('public')->delete($detail->file->path);
+                    $detail->file->delete();
+                }
+            }
+            
             $weeklyReport->status = WeeklyReport::STATUS_DELETED;
             $weeklyReport->save();
 
             return $weeklyReport;
         });
     }
+
 }
 
