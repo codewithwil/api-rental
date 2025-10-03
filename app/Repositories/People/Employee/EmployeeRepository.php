@@ -90,7 +90,9 @@ class EmployeeRepository implements EmployeeRepositoryInterface
             $employee->file->delete();
         }
 
-        $employee->user?->delete();
+        $user = $employee->user;
+        $employee->delete();
+        $user?->delete();
         return $employee->delete();
     }
 }
