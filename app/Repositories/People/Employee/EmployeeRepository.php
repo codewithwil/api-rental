@@ -35,7 +35,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
                 'email'    => $req->input('email'),
                 'password' => Hash::make($req->input('password')),
             ]);
-            $user->assignRole('employee');
+            $user->assignRole('petugas');
 
             $employee = Employee::create([
                 'user_id'   => $user->id,

@@ -3,7 +3,7 @@
 use App\Http\Controllers as ctr;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['role:admin|supervisor|employee'])->group(function () {
+Route::middleware(['role:admin|supervisor|petugas'])->group(function () {
     Route::get("/", [ctr\API\Resources\Vehicle\VehicleC::class, 'index'])->name("index");
     Route::get("/selected", [ctr\API\Resources\Vehicle\VehicleC::class, 'selected'])->name("selected");
     Route::get("/create", [ctr\API\Resources\Vehicle\VehicleC::class, 'create'])->name("create");
