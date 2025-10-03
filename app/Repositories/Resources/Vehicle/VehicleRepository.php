@@ -107,7 +107,7 @@ class VehicleRepository implements VehicleRepositoryInterface
     {
         return $this->runInTransaction(function () use ($id) {
             $vehicle         = Vehicle::findOrFail($id);
-            $vehicle->status = Vehicle::STATUS_INACTIVE;
+            $vehicle->status = Vehicle::STATUS_DELETED;
             $vehicle->save();
 
             return $vehicle;
