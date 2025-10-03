@@ -35,7 +35,7 @@ class WeeklyReportRepository implements WeeklyReportRepositoryInterface
                         'weekReportId' => $report->weekReportId,
                         'user_id' => $report->user_id,
                         'user_name' => $report->userInfo(), 
-                        'vehicle_id' => $report->vehicle_id,
+                        'vehicle' => $report->vehicle,
                         'report_date' => $report->report_date,
                         'note' => $report->note,
                         'status' => $report->status,
