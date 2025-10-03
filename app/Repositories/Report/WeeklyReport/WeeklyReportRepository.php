@@ -95,36 +95,53 @@ class WeeklyReportRepository implements WeeklyReportRepositoryInterface
     {
         return $this->runInTransaction(function () use ($req, $id) {
             $weeklyReport = WeeklyReport::findOrFail($id);
+
             $weeklyReport->update($req->only([
                 'user_id','vehicle_id','report_date','note','status'
             ]));
 
-            if ($req->has('details')) {
-                foreach ($req->input('details') as $index => $detailData) {
-                    $detail = WeeklyReportDetail::updateOrCreate(
-                        [
-                            'weekReport_id' => $weeklyReport->weekReportId,
-                            'component'     => $detailData['component'],
-                            'position'      => $detailData['position'],
-                        ],
-                        []
-                    );
+            $sentDetailIds = collect($req->input('details'))
+                ->pluck('id') 
+                ->filter()
+                ->toArray();
 
-                    if ($req->hasFile("details.$index.file")) {
-                        if ($detail->file) {
-                            $detail->file->delete();
-                        }
-
-                        $file     = $req->file("details.$index.file");
-                        $path     = $file->store('weeklyReport', 'public');
-
-                        $detail->file()->create([
-                            'path'          => $path,
-                            'original_name' => $file->getClientOriginalName(),
-                            'size'          => $file->getSize(),
-                            'mime_type'     => $file->getClientMimeType(),
-                        ]);
+            WeeklyReportDetail::where('weekReport_id', $weeklyReport->weekReportId)
+                ->whereNotIn('weekReportDetId', $sentDetailIds)
+                ->each(function($detail) {
+                    if ($detail->file) {
+                        Storage::disk('public')->delete($detail->file->path);
+                        $detail->file->delete();
                     }
+                    $detail->delete();
+                });
+
+            foreach ($req->input('details') as $index => $detailData) {
+                $detail = WeeklyReportDetail::updateOrCreate(
+                    [
+                        'weekReportDetId' => $detailData['id'] ?? null, 
+                    ],
+                    [
+                        'weekReport_id'   => $weeklyReport->weekReportId,
+                        'component'       => $detailData['component'],
+                        'position'        => $detailData['position'],
+                    ]
+                );
+
+                if ($req->hasFile("details.$index.file")) {
+                    if ($detail->file) {
+                        Storage::disk('public')->delete($detail->file->path);
+                        $detail->file->delete();
+                    }
+
+                    $file = $req->file("details.$index.file");
+                    $path = $file->store('weeklyReport', 'public');
+
+                    $detail->file()->create([
+                        'path'          => $path,
+                        'original_name' => $file->getClientOriginalName(),
+                        'size'          => $file->getSize(),
+                        'mime_type'     => $file->getClientMimeType(),
+                    ]);
                 }
             }
 
@@ -142,7 +159,7 @@ class WeeklyReportRepository implements WeeklyReportRepositoryInterface
                     $detail->file->delete();
                 }
             }
-            
+
             $weeklyReport->status = WeeklyReport::STATUS_DELETED;
             $weeklyReport->save();
 
