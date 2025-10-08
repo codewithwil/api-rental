@@ -36,6 +36,8 @@ class RentCarRepository implements RentCarRepositoryInterface
     public function store(Request $req)
     {
         return $this->runInTransaction(function () use ($req) {
+            $pricePerDay = $this->normalizeDecimal($req->input('pricePerDay'));
+           
             $rentCar = RentCar::create([
                 'vehicle_id'       => $req->input('vehicle_id'),
                 'renter_name'      => $req->input('renter_name'),
@@ -43,7 +45,7 @@ class RentCarRepository implements RentCarRepositoryInterface
                 'renter_phone'     => $req->input('renter_phone'),
                 'startDate'        => $req->input('startDate'),
                 'endDate'          => $req->input('endDate'),
-                'pricePerDay'      => $req->input('pricePerDay'),
+                'pricePerDay'   => $pricePerDay,
                 'penalty'          => $req->input('penalty'),
                 'notes'            => $req->input('notes'),
                 'type'             => $req->input('type'), 
@@ -83,15 +85,24 @@ class RentCarRepository implements RentCarRepositoryInterface
     public function update(Request $req, $id)
     {
         return $this->runInTransaction(function () use ($req, $id) {
+            $pricePerDay = $this->normalizeDecimal($req->input('pricePerDay'));
             $rentCar      = RentCar::findOrFail($id);
             $oldType      = $rentCar->type; 
             $oldVehicleId = $rentCar->vehicle_id; 
             $newVehicleId = $req->input('vehicle_id');
 
-            $rentCar->update($req->only([
-                'vehicle_id','renter_name','renter_address','renter_phone',
-                'startDate', 'endDate', 'pricePerDay', 'penalty','notes','type',
-            ]));
+            $rentCar->update([
+                'vehicle_id'    => $newVehicleId,
+                'renter_name'   => $req->input('renter_name'),
+                'renter_address'=> $req->input('renter_address'),
+                'renter_phone'  => $req->input('renter_phone'),
+                'startDate'     => $req->input('startDate'),
+                'endDate'       => $req->input('endDate'),
+                'pricePerDay'   => $pricePerDay,
+                'penalty'       => $req->input('penalty'),
+                'notes'         => $req->input('notes'),
+                'type'          => $req->input('type'),
+            ]);
 
             if ($oldVehicleId != $newVehicleId) {
                 Vehicle::where('vehicleId', $oldVehicleId)
@@ -154,5 +165,13 @@ class RentCarRepository implements RentCarRepositoryInterface
 
             return $rentCar;
         });
+    }
+
+    private function normalizeDecimal($value)
+    {
+        if (!$value) return 0;
+        $value = str_replace('.', '', $value); 
+        $value = str_replace(',', '.', $value); 
+        return floatval($value);
     }
 }

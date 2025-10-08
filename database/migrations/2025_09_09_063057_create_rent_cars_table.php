@@ -20,7 +20,7 @@ return new class extends Migration
                 $table->string('renter_phone', 20)->nullable(false);
                 $table->date('startDate');
                 $table->date('endDate');
-                $table->decimal('pricePerDay', 12, 2); 
+                $table->decimal('pricePerDay', 40, 20);
                 $table->decimal('penalty', 5, 2)->nullable(false);
                 $table->text('notes')->nullable(true);
                 $table->tinyInteger('type');
