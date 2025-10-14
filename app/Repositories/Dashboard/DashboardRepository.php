@@ -43,8 +43,8 @@ class DashboardRepository implements DashboardRepositoryInterface
                 $join->on('rent_cars.rentCarId', '=', 'payment_amounts.payable_id')
                     ->where('payment_amounts.payable_type', '=', RentCar::class);
             })
-            ->selectRaw('MONTH(payment_amounts.created_at) as month, SUM(payment_amounts.amount) as total')
-            ->whereYear('payment_amounts.created_at', $year)
+            ->selectRaw('MONTH(payment_amounts.date) as month, SUM(payment_amounts.amount) as total')
+            ->whereYear('payment_amounts.date', $year)
             ->groupBy('month')
             ->orderBy('month')
             ->pluck('total', 'month');
@@ -73,13 +73,13 @@ class DashboardRepository implements DashboardRepositoryInterface
                     ->where('p.type', PaymentAmount::TYPE_KELUAR);
             })
             ->selectRaw("
-                MONTH(p.created_at) as month,
+                MONTH(p.date) as month,
                 SUM(p.amount) as expense
             ")
-            ->whereYear('p.created_at', $year);
+            ->whereYear('p.date', $year);
 
         if ($month) {
-            $expenseQuery->whereMonth('p.created_at', $month);
+            $expenseQuery->whereMonth('p.date', $month);
         }
 
         $expenseQuery->groupBy('month')->orderBy('month');
