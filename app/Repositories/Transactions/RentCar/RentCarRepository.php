@@ -7,9 +7,11 @@ use App\{
     Models\Transaction\RentCar\RentCar,
     Traits\DbTransaction,
     Models\Resources\Vehicle\Vehicle,
-    Models\Transactions\Payment\PaymentAmount\PaymentAmount
+    Models\Transactions\Payment\PaymentAmount\PaymentAmount,
+    Models\Transactions\ReturnRentCar\ReturnRentCar,
+    Models\Transactions\Debt\Debt
 };
-use App\Models\Transactions\Debt\Debt;
+
 use Illuminate\{
     Http\Request
 };
@@ -17,6 +19,7 @@ use Illuminate\{
 use Carbon\{
     Carbon
 };
+use Illuminate\Support\Facades\DB;
 
 class RentCarRepository implements RentCarRepositoryInterface
 {
@@ -25,6 +28,25 @@ class RentCarRepository implements RentCarRepositoryInterface
     public function getAll()
     {
         return RentCar::with(['vehicle', 'paymentAmount'])->get();
+    }
+
+    public function getSelected()
+    {
+        $sub = DB::table('rent_cars as rc')
+            ->select(
+                'rc.rentCarId',
+                'rc.vehicle_id',
+                DB::raw('ROW_NUMBER() OVER (PARTITION BY rc.vehicle_id ORDER BY rc.created_at DESC, rc.rentCarId DESC) as row_num')
+            );
+
+        $latest = DB::table(DB::raw("({$sub->toSql()}) as ranked"))
+            ->mergeBindings($sub)
+            ->where('ranked.row_num', 1)
+            ->pluck('ranked.rentCarId');
+
+        return RentCar::with(['vehicle', 'paymentAmount'])
+            ->whereIn('rentCarId', $latest)
+            ->get();
     }
 
     public function find($id)
@@ -45,7 +67,7 @@ class RentCarRepository implements RentCarRepositoryInterface
                 'renter_phone'     => $req->input('renter_phone'),
                 'startDate'        => $req->input('startDate'),
                 'endDate'          => $req->input('endDate'),
-                'pricePerDay'   => $pricePerDay,
+                'pricePerDay'      => $req->input('pricePerDay'),
                 'penalty'          => $req->input('penalty'),
                 'notes'            => $req->input('notes'),
                 'type'             => $req->input('type'), 
@@ -98,7 +120,7 @@ class RentCarRepository implements RentCarRepositoryInterface
                 'renter_phone'  => $req->input('renter_phone'),
                 'startDate'     => $req->input('startDate'),
                 'endDate'       => $req->input('endDate'),
-                'pricePerDay'   => $pricePerDay,
+                'pricePerDay'   => $req->input('pricePerDay'),
                 'penalty'       => $req->input('penalty'),
                 'notes'         => $req->input('notes'),
                 'type'          => $req->input('type'),

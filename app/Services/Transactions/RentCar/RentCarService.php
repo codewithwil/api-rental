@@ -28,6 +28,13 @@ class RentCarService
         ]);
     }
 
+    public function getSelected()
+    {
+        return $this->successResponse([
+            'rentCar' => $this->rentCarRepo->getSelected()
+        ]);
+    }
+
     public function show($id)
     {
         return $this->successResponse([

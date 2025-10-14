@@ -5,11 +5,12 @@ namespace App\Repositories\Transactions\ReturnRentCar;
 use App\{
     Models\Transaction\RentCar\RentCar,
     Models\Transactions\ReturnRentCar\ReturnRentCar,
-    Traits\DbTransaction
+    Traits\DbTransaction,
+    Models\Resources\Vehicle\Vehicle
 };
-use App\Models\Resources\Vehicle\Vehicle;
+
 use Illuminate\{
-    Http\Request
+    Http\Request,
 };
 
 use Carbon\Carbon;
