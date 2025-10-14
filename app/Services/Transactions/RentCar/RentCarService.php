@@ -21,10 +21,10 @@ class RentCarService
         protected RentCarRepositoryInterface $rentCarRepo
     ) {}
 
-    public function index()
+    public function index(Request $req)
     {
         return $this->successResponse([
-            'rentCar' => $this->rentCarRepo->getAll()
+            'rentCar' => $this->rentCarRepo->getAll($req)
         ]);
     }
 

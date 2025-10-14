@@ -19,9 +19,9 @@ class ReturnRentCarRepository implements ReturnRentCarRepositoryInterface
 {
     use DbTransaction;
 
-    public function getAll()
+    public function getAll(Request $req)
     {
-        return ReturnRentCar::with('rentCar.vehicle')->get();
+        return ReturnRentCar::with('rentCar.vehicle')->paginate(10);
     }
 
     public function find($id)

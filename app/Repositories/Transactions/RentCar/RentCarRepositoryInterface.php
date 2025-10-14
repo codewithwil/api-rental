@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 interface RentCarRepositoryInterface
 {
-    public function getAll();
+    public function getAll(Request $req);
     public function getSelected();
     public function find($id);
     public function store(Request $req);

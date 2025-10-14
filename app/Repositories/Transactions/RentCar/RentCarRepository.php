@@ -25,9 +25,9 @@ class RentCarRepository implements RentCarRepositoryInterface
 {
     use DbTransaction;
 
-    public function getAll()
+    public function getAll(Request $req)
     {
-        return RentCar::with(['vehicle', 'paymentAmount'])->get();
+        return RentCar::with(['vehicle', 'paymentAmount'])->paginate(10);
     }
 
     public function getSelected()

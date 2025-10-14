@@ -15,7 +15,7 @@ class RentCarC extends Controller
 {
     public function __construct(protected RentCarService $service) {}
 
-    public function index() { return $this->service->index(); }
+    public function index(Request $req) { return $this->service->index($req); }
     public function getSelected() { return $this->service->getSelected(); }
     public function show($id) { return $this->service->show($id); }
     public function store(Request $req) { return $this->service->store($req); }
