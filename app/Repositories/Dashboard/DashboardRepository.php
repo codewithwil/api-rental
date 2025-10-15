@@ -149,14 +149,14 @@ class DashboardRepository implements DashboardRepositoryInterface
 
         $query = DB::table('payment_amounts')
             ->selectRaw("
-                MONTH(created_at) as month,
+                MONTH(date) as month,
                 SUM(CASE WHEN type = 1 THEN amount ELSE 0 END) as income,
                 SUM(CASE WHEN type = 2 THEN amount ELSE 0 END) as expense
             ")
-            ->whereYear('created_at', $year);
+            ->whereYear('date', $year);
 
         if ($month) {
-            $query->whereMonth('created_at', $month);
+            $query->whereMonth('date', $month);
         }
 
         $query->groupBy('month')->orderBy('month');
