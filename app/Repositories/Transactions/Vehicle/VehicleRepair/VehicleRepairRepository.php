@@ -24,7 +24,10 @@ class VehicleRepairRepository implements VehicleRepairRepositoryInterface
 
     public function getTypeApprove()
     {
-        return VehicleRepair::with('vehicle')->where('statusRepair', VehicleRepair::STATUSREP_COMPLETED)->get();
+        return VehicleRepair::with('vehicle')
+            ->where('statusRepair', VehicleRepair::STATUSREP_COMPLETED)
+            ->whereDoesntHave('vehicleRepairReal') 
+            ->get();
     }
 
     public function find($id)
