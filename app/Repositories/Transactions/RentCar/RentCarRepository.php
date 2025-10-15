@@ -30,27 +30,27 @@ class RentCarRepository implements RentCarRepositoryInterface
         return RentCar::with(['vehicle', 'paymentAmount'])->paginate(10);
     }
 
-public function getSelected()
-{
-    $sub = DB::table('rent_cars as rc')
-        ->select(
-            'rc.rentCarId',
-            'rc.vehicle_id',
-            DB::raw('ROW_NUMBER() OVER (PARTITION BY rc.vehicle_id ORDER BY rc.created_at DESC, rc.rentCarId DESC) as row_num')
-        );
+    public function getSelected()
+    {
+        $sub = DB::table('rent_cars as rc')
+            ->select(
+                'rc.rentCarId',
+                'rc.vehicle_id',
+                DB::raw('ROW_NUMBER() OVER (PARTITION BY rc.vehicle_id ORDER BY rc.created_at DESC, rc.rentCarId DESC) as row_num')
+            );
 
-    $latest = DB::table(DB::raw("({$sub->toSql()}) as ranked"))
-        ->mergeBindings($sub)
-        ->where('ranked.row_num', 1)
-        ->pluck('ranked.rentCarId');
+        $latest = DB::table(DB::raw("({$sub->toSql()}) as ranked"))
+            ->mergeBindings($sub)
+            ->where('ranked.row_num', 1)
+            ->pluck('ranked.rentCarId');
 
-    return RentCar::with(['vehicle', 'paymentAmount'])
-        ->whereIn('rentCarId', $latest)
-        ->whereHas('vehicle', function($q) {
-            $q->where('status', Vehicle::STATUS_RENT); // filter kendaraan sedang disewa
-        })
-        ->get();
-}
+        return RentCar::with(['vehicle', 'paymentAmount'])
+            ->whereIn('rentCarId', $latest)
+            ->whereHas('vehicle', function($q) {
+                $q->where('status', Vehicle::STATUS_RENT); 
+            })
+            ->get();
+    }
 
     public function find($id)
     {

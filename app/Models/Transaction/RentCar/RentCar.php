@@ -5,9 +5,10 @@ namespace App\Models\Transaction\RentCar;
 use App\{
     Models\Resources\Vehicle\Vehicle,
     Traits\ActivityLogs,
-    Models\Transactions\Payment\PaymentAmount\PaymentAmount
+    Models\Transactions\Payment\PaymentAmount\PaymentAmount,
+    Models\Transactions\ReturnRentCar\ReturnRentCar
 };
-use App\Models\Transactions\ReturnRentCar\ReturnRentCar;
+
 use Illuminate\{
     Database\Eloquent\Model
 };

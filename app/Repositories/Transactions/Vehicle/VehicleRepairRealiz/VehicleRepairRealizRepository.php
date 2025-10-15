@@ -43,6 +43,7 @@ class VehicleRepairRealizRepository implements VehicleRepairRealizRepositoryInte
             if ($req->filled('amount')) {
                 $vehicleRepairRealiz->paymentAmount()->create([
                     'type'         => PaymentAmount::TYPE_KELUAR, 
+                    'date'         => $vehicleRepairRealiz->completeDate, 
                     'amount'       => $req->input('amount'),
                     'status'       => PaymentAmount::STATUS_ACTIVE,
                 ]);
@@ -69,11 +70,13 @@ class VehicleRepairRealizRepository implements VehicleRepairRealizRepositoryInte
                 if ($payment) {
                     $payment->update([
                         'amount' => $req->input('amount'),
+                        'date'   => $vehicleRepairRealiz->completeDate, 
                         'status' => PaymentAmount::STATUS_ACTIVE,
                     ]);
                 } else {
                     $vehicleRepairRealiz->paymentAmount()->create([
                         'type'   => PaymentAmount::TYPE_KELUAR,
+                        'date'   => $vehicleRepairRealiz->completeDate, 
                         'amount' => $req->input('amount'),
                         'status' => PaymentAmount::STATUS_ACTIVE,
                     ]);
