@@ -6,10 +6,12 @@ use App\Models\Report\WeeklyReport\{
     WeeklyReport,
     WeeklyReportDetail
 };
-use App\Models\Files\Files;
+
 use App\Traits\DbTransaction;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\{
+    Http\Request,
+    Support\Facades\Storage
+};
 
 class WeeklyReportRepository implements WeeklyReportRepositoryInterface
 {
