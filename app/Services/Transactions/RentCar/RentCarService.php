@@ -55,6 +55,7 @@ class RentCarService
             'penalty'        => 'required|numeric|min:0',
             'type'           => 'required|integer|in:1,2',
             'notes'          => 'nullable|string',
+            'due_date'       => 'nullable|date',
         ]);
 
         if ($validator->fails()) {
@@ -82,6 +83,7 @@ class RentCarService
             'penalty'        => 'sometimes|numeric|min:0',
             'type'           => 'nullable|integer|in:1,2',
             'notes'          => 'nullable|string',
+            'due_date'       => 'nullable|date',
         ]);
 
         if ($validator->fails()) {

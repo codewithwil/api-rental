@@ -44,7 +44,8 @@ use App\{
     Repositories\Report\Kas\KasRepository,
     Repositories\Report\Kas\KasRepositoryInterface,
 };
-
+use App\Repositories\Transactions\Debts\DebtsRepository;
+use App\Repositories\Transactions\Debts\DebtsRepositoryInterface;
 use Illuminate\{
     Support\ServiceProvider
 };
@@ -73,6 +74,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(VehicleRepairRepositoryInterface::class, VehicleRepairRepository::class);
         $this->app->bind(VehicleRepairRealizRepositoryInterface::class, VehicleRepairRealizRepository::class);
         $this->app->bind(KasRepositoryInterface::class, KasRepository::class);
+        $this->app->bind(DebtsRepositoryInterface::class, DebtsRepository::class);
     }
 
     public function boot(): void

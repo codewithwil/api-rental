@@ -13,11 +13,12 @@ class VehicleRepairRealizRepository implements VehicleRepairRealizRepositoryInte
 {
     use DbTransaction;
 
-    public function getAll()
+    public function getAll(Request $req)
     {
         return VehicleRepairRealiz::with(['vehicleRepair.vehicle', 'paymentAmount'])
             ->where('status', VehicleRepairRealiz::STATUS_ACTIVE)
-            ->get();
+            ->orderBy('completeDate', 'desc')  
+            ->paginate(10);
     }
 
     public function find($id)

@@ -8,7 +8,6 @@ use App\{
     Traits\DbTransaction,
     Models\Resources\Vehicle\Vehicle,
     Models\Transactions\Payment\PaymentAmount\PaymentAmount,
-    Models\Transactions\ReturnRentCar\ReturnRentCar,
     Models\Transactions\Debt\Debt
 };
 
@@ -27,8 +26,12 @@ class RentCarRepository implements RentCarRepositoryInterface
 
     public function getAll(Request $req)
     {
-        return RentCar::with(['vehicle', 'paymentAmount'])->paginate(10);
+        return RentCar::with(['vehicle', 'paymentAmount'])
+            ->where('status', RentCar::STATUS_ACTIVE)
+            ->orderBy('startDate', 'desc') 
+            ->paginate(10);
     }
+
 
     public function getSelected()
     {
@@ -74,6 +77,8 @@ class RentCarRepository implements RentCarRepositoryInterface
                 'penalty'          => $req->input('penalty'),
                 'notes'            => $req->input('notes'),
                 'type'             => $req->input('type'), 
+                'due_date'         => $req->input('due_date'), 
+                'status'           => 1, 
             ]);
 
             Vehicle::where('vehicleId', $req->input('vehicle_id'))
@@ -98,7 +103,7 @@ class RentCarRepository implements RentCarRepositoryInterface
                     'debtable_id'   => $rentCar->rentCarId,
                     'debtable_type' => RentCar::class,
                     'amount'        => $total,
-                    'due_date'      => Carbon::now()->addMonth(), 
+                    'due_date'      => $req->input('due_date'), 
                     'status'        => 0, 
                 ]);
             }
@@ -127,6 +132,7 @@ class RentCarRepository implements RentCarRepositoryInterface
                 'penalty'       => $req->input('penalty'),
                 'notes'         => $req->input('notes'),
                 'type'          => $req->input('type'),
+                'due_date'      => $req->input('due_date'),
             ]);
 
             if ($oldVehicleId != $newVehicleId) {
@@ -163,7 +169,7 @@ class RentCarRepository implements RentCarRepositoryInterface
                     'debtable_id'   => $rentCar->rentCarId,
                     'debtable_type' => RentCar::class,
                     'amount'        => $total,
-                    'due_date'      => Carbon::now()->addMonth(), 
+                    'due_date'      => $req->input('due_date'), 
                     'status'        => 0, 
                 ]);
             }

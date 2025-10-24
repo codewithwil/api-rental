@@ -15,7 +15,7 @@ class VehicleRepairC extends Controller
 {
     public function __construct(protected VehicleRepairService $service) {}
 
-    public function index() { return $this->service->index(); }
+    public function index(Request $req) { return $this->service->index($req); }
     public function getTypeApprove() { return $this->service->getTypeApprove(); }
     public function updateStatus(Request $req, $id) { return $this->service->updateStatus($req, $id); }
     public function show($id) { return $this->service->show($id); }

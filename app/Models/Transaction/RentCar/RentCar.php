@@ -8,7 +8,7 @@ use App\{
     Models\Transactions\Payment\PaymentAmount\PaymentAmount,
     Models\Transactions\ReturnRentCar\ReturnRentCar
 };
-
+use App\Models\Transactions\Debt\Debt;
 use Illuminate\{
     Database\Eloquent\Model
 };
@@ -29,9 +29,7 @@ class RentCar extends Model
     ];
 
     public function vehicle(){return $this->belongsTo(Vehicle::class, 'vehicle_id', 'vehicleId');}
-    public function paymentAmount()
-    {
-        return $this->morphMany(PaymentAmount::class, 'payable');
-    }
+    public function paymentAmount(){return $this->morphMany(PaymentAmount::class, 'payable');}
+    public function debts(){return $this->morphMany(Debt::class, 'debtable');}
     public function returnRentCar(){return $this->hasMany(ReturnRentCar::class, 'rentCar_id', 'rentCarId');}
 }

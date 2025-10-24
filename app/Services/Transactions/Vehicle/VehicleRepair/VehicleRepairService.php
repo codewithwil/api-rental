@@ -20,10 +20,10 @@ class VehicleRepairService
 
     public function __construct(protected VehicleRepairRepositoryInterface $vehicleRepairRepo) {}
 
-    public function index()
+    public function index(Request $req)
     {
         return $this->successResponse([
-            'vehicleRepair' => $this->vehicleRepairRepo->getAll()
+            'vehicleRepair' => $this->vehicleRepairRepo->getAll($req)
         ]);
     }
 

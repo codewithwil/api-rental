@@ -21,7 +21,9 @@ class ReturnRentCarRepository implements ReturnRentCarRepositoryInterface
 
     public function getAll(Request $req)
     {
-        return ReturnRentCar::with('rentCar.vehicle')->paginate(10);
+        return ReturnRentCar::with('rentCar.vehicle')
+            ->orderBy('return_date', 'desc') 
+            ->paginate(10);
     }
 
     public function find($id)

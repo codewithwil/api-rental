@@ -24,7 +24,7 @@ return new class extends Migration
                 $table->decimal('penalty', 5, 2)->nullable(false);
                 $table->text('notes')->nullable(true);
                 $table->tinyInteger('type');
-                $table->tinyInteger('status')->default(0);
+                $table->tinyInteger('status')->default(1);
 
                 $table->timestamps();
                 $table->foreign('vehicle_id')->references('vehicleId')->on('vehicles')->onDelete('cascade');

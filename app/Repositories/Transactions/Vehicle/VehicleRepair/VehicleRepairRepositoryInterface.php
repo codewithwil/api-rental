@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 interface VehicleRepairRepositoryInterface
 {
-    public function getAll();
+    public function getAll(Request $req);
     public function getTypeApprove();
     public function updateStatus(Request $req, $id);
     public function find($id);

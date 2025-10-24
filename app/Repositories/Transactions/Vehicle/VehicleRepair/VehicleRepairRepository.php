@@ -5,22 +5,26 @@ namespace App\Repositories\Transactions\Vehicle\VehicleRepair;
 use App\{
     Repositories\Transactions\Vehicle\VehicleRepair\VehicleRepairRepositoryInterface,
     Traits\DbTransaction,
-    Models\Transactions\Vehicle\VehicleRepair\VehicleRepair
+    Models\Transactions\Vehicle\VehicleRepair\VehicleRepair,
+    Models\Resources\Vehicle\Vehicle
 };
-use App\Models\Resources\Vehicle\Vehicle;
+
 use Illuminate\{
     Http\Request,
+    Support\Facades\Auth
 };
-use Illuminate\Support\Facades\Auth;
 
 class VehicleRepairRepository implements VehicleRepairRepositoryInterface
 {
     use DbTransaction;
-
-    public function getAll()
+    public function getAll(Request $req)
     {
-        return VehicleRepair::with('vehicle')->where('status', VehicleRepair::STATUS_ACTIVE)->get();
+        return VehicleRepair::with('vehicle')
+            ->where('status', VehicleRepair::STATUS_ACTIVE)
+            ->orderBy('submission_date', 'desc') 
+            ->paginate(10);
     }
+
 
     public function getTypeApprove()
     {
