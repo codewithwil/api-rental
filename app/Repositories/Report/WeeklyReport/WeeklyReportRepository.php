@@ -26,6 +26,7 @@ class WeeklyReportRepository implements WeeklyReportRepositoryInterface
             'weeklyReportDetail.file'
         ])
         ->where('status', '!=', WeeklyReport::STATUS_DELETED)
+        ->orderByDesc('report_date')
         ->get();
 
         return response()->json([
