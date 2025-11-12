@@ -23,7 +23,7 @@ class RentCar extends Model
     protected $table      = 'rent_cars';
     protected $primaryKey = 'rentCarId';
     protected $fillable   = [
-        'vehicle_id','renter_name','renter_address',
+        'vehicle_id','owner','renter_name','renter_address',
         'renter_phone','startDate','endDate',
         'pricePerDay','penalty','notes','type','status',
     ];

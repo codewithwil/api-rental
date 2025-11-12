@@ -15,6 +15,7 @@ return new class extends Migration
                 $table->engine = "InnoDB";   
                 $table->id('rentCarId');
                 $table->unsignedBigInteger('vehicle_id');
+                $table->string('owner', 75);
                 $table->string('renter_name', 75);
                 $table->text('renter_address')->nullable(false);
                 $table->string('renter_phone', 20)->nullable(false);

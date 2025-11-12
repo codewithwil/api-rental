@@ -68,6 +68,7 @@ class RentCarRepository implements RentCarRepositoryInterface
            
             $rentCar = RentCar::create([
                 'vehicle_id'       => $req->input('vehicle_id'),
+                'owner'            => $req->input('owner'),
                 'renter_name'      => $req->input('renter_name'),
                 'renter_address'   => $req->input('renter_address'),
                 'renter_phone'     => $req->input('renter_phone'),
@@ -123,6 +124,7 @@ class RentCarRepository implements RentCarRepositoryInterface
 
             $rentCar->update([
                 'vehicle_id'    => $newVehicleId,
+                'owner'         => $req->input('owner'),
                 'renter_name'   => $req->input('renter_name'),
                 'renter_address'=> $req->input('renter_address'),
                 'renter_phone'  => $req->input('renter_phone'),

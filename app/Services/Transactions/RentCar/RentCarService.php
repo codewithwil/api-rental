@@ -46,6 +46,7 @@ class RentCarService
     {
         $validator = Validator::make($req->all(), [
             'vehicle_id'     => 'required|exists:vehicles,vehicleId',
+            'owner'          => 'required|string|max:75',
             'renter_name'    => 'required|string|max:75',
             'renter_address' => 'required|string',
             'renter_phone'   => 'required|string|max:20',
@@ -74,6 +75,7 @@ class RentCarService
     {
         $validator = Validator::make($req->all(), [
             'vehicle_id'     => 'required|exists:vehicles,vehicleId',
+            'owner'          => 'sometimes|string|max:75',
             'renter_name'    => 'sometimes|string|max:75',
             'renter_address' => 'sometimes|string',
             'renter_phone'   => 'sometimes|string|max:20',
