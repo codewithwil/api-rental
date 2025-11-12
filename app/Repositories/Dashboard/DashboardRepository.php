@@ -45,6 +45,7 @@ class DashboardRepository implements DashboardRepositoryInterface
             })
             ->selectRaw('MONTH(payment_amounts.date) as month, SUM(payment_amounts.amount) as total')
             ->whereYear('payment_amounts.date', $year)
+            ->where('payment_amounts.status', PaymentAmount::STATUS_ACTIVE) 
             ->groupBy('month')
             ->orderBy('month')
             ->pluck('total', 'month');
