@@ -158,6 +158,7 @@ class RentCarRepository implements RentCarRepositoryInterface
                 } else {
                     PaymentAmount::create([
                         'payable_id'   => $rentCar->rentCarId,
+                        'date'         => $rentCar->startDate,
                         'payable_type' => RentCar::class,
                         'type'         => PaymentAmount::TYPE_MASUK,
                         'amount'       => $total,
