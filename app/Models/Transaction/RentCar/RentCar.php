@@ -25,7 +25,7 @@ class RentCar extends Model
     protected $fillable   = [
         'vehicle_id','owner','renter_name','renter_address',
         'renter_phone','startDate','endDate',
-        'pricePerDay','penalty','notes','type','status',
+        'pricePerDay','penalty','ppn','pph','notes','type','status',
     ];
 
     public function vehicle(){return $this->belongsTo(Vehicle::class, 'vehicle_id', 'vehicleId');}

@@ -47,6 +47,7 @@ class RentCarService
         $validator = Validator::make($req->all(), [
             'vehicle_id'     => 'required|exists:vehicles,vehicleId',
             'owner'          => 'required|string|max:75',
+            'paymentDate'    => 'required|date',
             'renter_name'    => 'required|string|max:75',
             'renter_address' => 'required|string',
             'renter_phone'   => 'required|string|max:20',
@@ -54,6 +55,8 @@ class RentCarService
             'endDate'        => 'required|date|after_or_equal:startDate',
             'pricePerDay'    => 'required|numeric|min:0',
             'penalty'        => 'required|numeric|min:0',
+            'ppn'            => 'required|numeric',
+            'pph'            => 'required|numeric',
             'type'           => 'required|integer|in:1,2',
             'notes'          => 'nullable|string',
             'due_date'       => 'nullable|date',
@@ -76,6 +79,7 @@ class RentCarService
         $validator = Validator::make($req->all(), [
             'vehicle_id'     => 'required|exists:vehicles,vehicleId',
             'owner'          => 'sometimes|string|max:75',
+            'paymentDate'    => 'sometimes|date',
             'renter_name'    => 'sometimes|string|max:75',
             'renter_address' => 'sometimes|string',
             'renter_phone'   => 'sometimes|string|max:20',
@@ -83,6 +87,8 @@ class RentCarService
             'endDate'        => 'sometimes|date|after_or_equal:startDate',
             'pricePerDay'    => 'sometimes|numeric|min:0',
             'penalty'        => 'sometimes|numeric|min:0',
+            'ppn'            => 'sometimes|numeric',
+            'pph'            => 'sometimes|numeric',
             'type'           => 'nullable|integer|in:1,2',
             'notes'          => 'nullable|string',
             'due_date'       => 'nullable|date',

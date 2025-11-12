@@ -11,13 +11,8 @@ use App\{
     Models\Transactions\Debt\Debt
 };
 
-use Illuminate\{
-    Http\Request
-};
-
-use Carbon\{
-    Carbon
-};
+use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class RentCarRepository implements RentCarRepositoryInterface
@@ -28,10 +23,9 @@ class RentCarRepository implements RentCarRepositoryInterface
     {
         return RentCar::with(['vehicle', 'paymentAmount'])
             ->where('status', RentCar::STATUS_ACTIVE)
-            ->orderBy('startDate', 'desc') 
+            ->orderBy('startDate', 'desc')
             ->paginate(10);
     }
-
 
     public function getSelected()
     {
@@ -49,8 +43,8 @@ class RentCarRepository implements RentCarRepositoryInterface
 
         return RentCar::with(['vehicle', 'paymentAmount'])
             ->whereIn('rentCarId', $latest)
-            ->whereHas('vehicle', function($q) {
-                $q->where('status', Vehicle::STATUS_RENT); 
+            ->whereHas('vehicle', function ($q) {
+                $q->where('status', Vehicle::STATUS_RENT);
             })
             ->get();
     }
@@ -58,54 +52,70 @@ class RentCarRepository implements RentCarRepositoryInterface
     public function find($id)
     {
         return RentCar::with(['vehicle', 'paymentAmount'])
-                        ->findOrFail($id);
+            ->findOrFail($id);
     }
 
     public function store(Request $req)
     {
         return $this->runInTransaction(function () use ($req) {
             $pricePerDay = $this->normalizeDecimal($req->input('pricePerDay'));
-           
+
             $rentCar = RentCar::create([
-                'vehicle_id'       => $req->input('vehicle_id'),
-                'owner'            => $req->input('owner'),
-                'renter_name'      => $req->input('renter_name'),
-                'renter_address'   => $req->input('renter_address'),
-                'renter_phone'     => $req->input('renter_phone'),
-                'startDate'        => $req->input('startDate'),
-                'endDate'          => $req->input('endDate'),
-                'pricePerDay'      => $req->input('pricePerDay'),
-                'penalty'          => $req->input('penalty'),
-                'notes'            => $req->input('notes'),
-                'type'             => $req->input('type'), 
-                'due_date'         => $req->input('due_date'), 
-                'status'           => 1, 
+                'vehicle_id'     => $req->input('vehicle_id'),
+                'owner'          => $req->input('owner'),
+                'renter_name'    => $req->input('renter_name'),
+                'renter_address' => $req->input('renter_address'),
+                'renter_phone'   => $req->input('renter_phone'),
+                'startDate'      => $req->input('startDate'),
+                'endDate'        => $req->input('endDate'),
+                'pricePerDay'    => $req->input('pricePerDay'),
+                'penalty'        => $req->input('penalty'),
+                'ppn'            => $req->input('ppn'),
+                'pph'            => $req->input('pph'),
+                'notes'          => $req->input('notes'),
+                'type'           => $req->input('type'),
+                'due_date'       => $req->input('due_date'),
+                'status'         => RentCar::STATUS_ACTIVE,
             ]);
 
+            // Ubah status kendaraan jadi disewa
             Vehicle::where('vehicleId', $req->input('vehicle_id'))
                 ->update(['status' => Vehicle::STATUS_RENT]);
 
-            $start = Carbon::parse($req->input('startDate'));
-            $end   = Carbon::parse($req->input('endDate'));
+            // Hitung total sewa
+            $start = Carbon::parse($rentCar->startDate);
+            $end   = Carbon::parse($rentCar->endDate);
             $days  = $start->diffInDays($end) + 1;
-            $total = $days * $req->input('pricePerDay');
+            $total = $days * $pricePerDay;
 
+            // Ambil PPN & PPH (persen)
+            $ppn = floatval($req->input('ppn')) ?? 0;
+            $pph = floatval($req->input('pph')) ?? 0;
+
+            // Hitung nilai dalam rupiah
+            $ppnAmount = $total * ($ppn / 100);
+            $pphAmount = $total * ($pph / 100);
+
+            // Grand total
+            $grandTotal = $total + $ppnAmount - $pphAmount;
+
+            // Simpan ke PaymentAmount atau Debt
             if ($rentCar->type == RentCar::TYPE_CASH) {
                 PaymentAmount::create([
                     'payable_id'   => $rentCar->rentCarId,
-                    'payable_type' => RentCar::class,        
+                    'payable_type' => RentCar::class,
                     'date'         => $rentCar->startDate,
                     'type'         => PaymentAmount::TYPE_MASUK,
-                    'amount'       => $total,
+                    'amount'       => $grandTotal,
                     'status'       => PaymentAmount::STATUS_ACTIVE,
                 ]);
             } elseif ($rentCar->type == RentCar::TYPE_HUTANG) {
                 Debt::create([
                     'debtable_id'   => $rentCar->rentCarId,
                     'debtable_type' => RentCar::class,
-                    'amount'        => $total,
-                    'due_date'      => $req->input('due_date'), 
-                    'status'        => 0, 
+                    'amount'        => $grandTotal,
+                    'due_date'      => $req->input('due_date'),
+                    'status'        => Debt::STATUS_PENDING ?? 0,
                 ]);
             }
 
@@ -117,38 +127,49 @@ class RentCarRepository implements RentCarRepositoryInterface
     {
         return $this->runInTransaction(function () use ($req, $id) {
             $pricePerDay = $this->normalizeDecimal($req->input('pricePerDay'));
-            $rentCar      = RentCar::findOrFail($id);
-            $oldType      = $rentCar->type; 
-            $oldVehicleId = $rentCar->vehicle_id; 
+            $rentCar = RentCar::findOrFail($id);
+            $oldVehicleId = $rentCar->vehicle_id;
             $newVehicleId = $req->input('vehicle_id');
 
             $rentCar->update([
-                'vehicle_id'    => $newVehicleId,
-                'owner'         => $req->input('owner'),
-                'renter_name'   => $req->input('renter_name'),
-                'renter_address'=> $req->input('renter_address'),
-                'renter_phone'  => $req->input('renter_phone'),
-                'startDate'     => $req->input('startDate'),
-                'endDate'       => $req->input('endDate'),
-                'pricePerDay'   => $req->input('pricePerDay'),
-                'penalty'       => $req->input('penalty'),
-                'notes'         => $req->input('notes'),
-                'type'          => $req->input('type'),
-                'due_date'      => $req->input('due_date'),
+                'vehicle_id'     => $newVehicleId,
+                'owner'          => $req->input('owner'),
+                'renter_name'    => $req->input('renter_name'),
+                'renter_address' => $req->input('renter_address'),
+                'renter_phone'   => $req->input('renter_phone'),
+                'startDate'      => $req->input('startDate'),
+                'endDate'        => $req->input('endDate'),
+                'pricePerDay'    => $req->input('pricePerDay'),
+                'penalty'        => $req->input('penalty'),
+                'ppn'            => $req->input('ppn'),
+                'pph'            => $req->input('pph'),
+                'notes'          => $req->input('notes'),
+                'type'           => $req->input('type'),
+                'due_date'       => $req->input('due_date'),
             ]);
 
             if ($oldVehicleId != $newVehicleId) {
                 Vehicle::where('vehicleId', $oldVehicleId)
                     ->update(['status' => Vehicle::STATUS_ACTIVE]);
-
                 Vehicle::where('vehicleId', $newVehicleId)
                     ->update(['status' => Vehicle::STATUS_RENT]);
             }
 
-            $start   = Carbon::parse($rentCar->startDate);
-            $end     = Carbon::parse($rentCar->endDate);
-            $days    = $start->diffInDays($end) + 1;
-            $total   = $days * $rentCar->pricePerDay;
+            $start = Carbon::parse($rentCar->startDate);
+            $end   = Carbon::parse($rentCar->endDate);
+            $days  = $start->diffInDays($end) + 1;
+            $total = $days * $pricePerDay;
+
+            // Ambil PPN & PPH (persen)
+            $ppn = floatval($req->input('ppn')) ?? 0;
+            $pph = floatval($req->input('pph')) ?? 0;
+
+            // Hitung nilai dalam rupiah
+            $ppnAmount = $total * ($ppn / 100);
+            $pphAmount = $total * ($pph / 100);
+
+            // Grand total
+            $grandTotal = $total + $ppnAmount - $pphAmount;
 
             if ($rentCar->type == RentCar::TYPE_CASH) {
                 $payment = PaymentAmount::where('payable_id', $rentCar->rentCarId)
@@ -156,14 +177,14 @@ class RentCarRepository implements RentCarRepositoryInterface
                     ->first();
 
                 if ($payment) {
-                    $payment->update(['amount' => $total]);
+                    $payment->update(['amount' => $grandTotal]);
                 } else {
                     PaymentAmount::create([
                         'payable_id'   => $rentCar->rentCarId,
                         'date'         => $rentCar->startDate,
                         'payable_type' => RentCar::class,
                         'type'         => PaymentAmount::TYPE_MASUK,
-                        'amount'       => $total,
+                        'amount'       => $grandTotal,
                         'status'       => PaymentAmount::STATUS_ACTIVE,
                     ]);
                 }
@@ -171,9 +192,9 @@ class RentCarRepository implements RentCarRepositoryInterface
                 Debt::create([
                     'debtable_id'   => $rentCar->rentCarId,
                     'debtable_type' => RentCar::class,
-                    'amount'        => $total,
-                    'due_date'      => $req->input('due_date'), 
-                    'status'        => 0, 
+                    'amount'        => $grandTotal,
+                    'due_date'      => $req->input('due_date'),
+                    'status'        => 0,
                 ]);
             }
 
@@ -184,18 +205,20 @@ class RentCarRepository implements RentCarRepositoryInterface
     public function delete($id)
     {
         return $this->runInTransaction(function () use ($id) {
-            $rentCar         = RentCar::findOrFail($id);
+            $rentCar = RentCar::findOrFail($id);
             $rentCar->status = RentCar::STATUS_INACTIVE;
             $rentCar->save();
+
             PaymentAmount::where('payable_id', $rentCar->rentCarId)
                 ->where('payable_type', RentCar::class)
                 ->update(['status' => PaymentAmount::STATUS_INACTIVE]);
+
             Debt::where('debtable_id', $rentCar->rentCarId)
-                            ->where('debtable_type', RentCar::class)
-                            ->delete();
+                ->where('debtable_type', RentCar::class)
+                ->delete();
 
             Vehicle::where('vehicleId', $rentCar->vehicle_id)
-                ->update(['status' => Vehicle::STATUS_ACTIVE]); 
+                ->update(['status' => Vehicle::STATUS_ACTIVE]);
 
             return $rentCar;
         });
@@ -203,9 +226,18 @@ class RentCarRepository implements RentCarRepositoryInterface
 
     private function normalizeDecimal($value)
     {
-        if (!$value) return 0;
-        $value = str_replace('.', '', $value); 
-        $value = str_replace(',', '.', $value); 
+        if (is_null($value) || $value === '') {
+            return 0;
+        }
+        if (is_numeric($value)) {
+            return floatval($value);
+        }
+        
+        $value = preg_replace('/[^0-9,.-]/', '', $value);
+        $value = str_replace('.', '', $value);
+        $value = str_replace(',', '.', $value);
+
         return floatval($value);
     }
+
 }
