@@ -21,7 +21,7 @@ class WeeklyReportDetail extends Model
     ];
 
     public function weeklyReport(){
-        return $this->belongsTo(weeklyReport::class, 'weekReport_id', 'weekReportId');
+        return $this->belongsTo(WeeklyReport::class, 'weekReport_id', 'weekReportId');
     }
 
     public function file(){return $this->morphOne(Files::class, 'fileable');}

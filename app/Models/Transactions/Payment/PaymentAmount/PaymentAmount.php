@@ -15,8 +15,25 @@ class PaymentAmount extends Model
     protected $table      = 'payment_amounts';
     protected $primaryKey = 'payAmountId';
     protected $fillable   = [
-        'payable_id', 'payable_type', 'type', 'amount', 'status'
+        'payable_id', 'payable_type', 'date','type', 'amount', 'status'
     ];
 
     public function payable(){return $this->morphTo();}
+
+    public function getSourceAttribute()
+    {
+        if ($this->payable instanceof \App\Models\Transaction\RentCar\RentCar) {
+            return "Sewa Kendaraan";
+        }
+
+        if ($this->payable instanceof \App\Models\Transactions\ReturnRentCar\ReturnRentCar) {
+            return "Pengembalian Kendaraan";
+        }
+
+        if ($this->payable instanceof \App\Models\Transactions\Vehicle\VehicleRepairRealiz\VehicleRepairRealiz) {
+            return "Realisasi Perbaikan";
+        }
+
+        return "Lainnya";
+    }
 }

@@ -22,13 +22,13 @@ class ReturnRentCarService
         protected ReturnRentCarRepositoryInterface $returnRentCarRepo
     ) {}
 
-    public function index()
+    public function index(Request $req)
     {
         return $this->successResponse([
-            'returnRentCars' => $this->returnRentCarRepo->getAll()
+            'returnRentCars' => $this->returnRentCarRepo->getAll($req)
         ]);
     }
-
+       
     public function show($id)
     {
         return $this->successResponse([

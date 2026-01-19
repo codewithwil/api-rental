@@ -16,6 +16,7 @@ return new class extends Migration
                 $table->id('payAmountId');
                 $table->string('payable_id', 15);
                 $table->string('payable_type', 100);
+                $table->date('date');
                 $table->tinyInteger('type')->default(1)->comment('1 = masuk, 2 = keluar');
                 $table->decimal('amount', 12, 2); 
                 $table->tinyInteger('status')->default(1);

@@ -20,5 +20,5 @@ class AdminC extends Controller
     public function show($id) { return $this->service->show($id); }
     public function store(Request $req) { return $this->service->store($req); }
     public function update(Request $req, $id) { return $this->service->update($req, $id); }
-    public function destroy($id) { return $this->service->delete($id); }
+    public function delete($id) { return $this->service->delete($id); }
 }
