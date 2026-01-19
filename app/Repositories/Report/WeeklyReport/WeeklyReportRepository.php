@@ -50,7 +50,6 @@ class WeeklyReportRepository implements WeeklyReportRepositoryInterface
         ]);
     }
 
-
     public function find($id)
     {
         return WeeklyReport::with(['user','vehicle','weeklyReportDetail.file'])
@@ -119,6 +118,14 @@ class WeeklyReportRepository implements WeeklyReportRepositoryInterface
                 });
 
             foreach ($req->input('details') as $index => $detailData) {
+                if (!empty($detailData['delete']) && $detailData['delete'] == 1) {
+                    if ($detail->file) {
+                        Storage::disk('public')->delete($detail->file->path);
+                        $detail->file->delete();
+                    }
+                    continue; 
+                }
+
                 $detail = WeeklyReportDetail::updateOrCreate(
                     [
                         'weekReportDetId' => $detailData['id'] ?? null, 
