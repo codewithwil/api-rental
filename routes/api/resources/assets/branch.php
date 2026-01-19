@@ -3,7 +3,7 @@
 use App\Http\Controllers as ctr;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['role:admin|supervisor|employee'])->group(function () {
+Route::middleware(['role:admin|supervisor|petugas'])->group(function () {
     Route::get("/", [ctr\API\Resources\Branch\BranchC::class, 'index'])->name("index");
     Route::get("/create", [ctr\API\Resources\Branch\BranchC::class, 'create'])->name("create");
     Route::get("/invoice", [ctr\API\Resources\Branch\BranchC::class, 'invoice'])->name("invoice");

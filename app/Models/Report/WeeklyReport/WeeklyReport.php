@@ -29,7 +29,7 @@ class WeeklyReport extends Model
     public function user(){return $this->belongsTo(User::class, 'user_id');}
     public function vehicle(){return $this->belongsTo(Vehicle::class, 'vehicle_id');}
     public function weeklyReportDetail() {
-        return $this->hasMany(weeklyReportDetail::class, 'weekReport_id', 'weekReportId');
+        return $this->hasMany(WeeklyReportDetail::class, 'weekReport_id', 'weekReportId');
     }
 
     public function getStatusDescription():string
@@ -56,5 +56,16 @@ class WeeklyReport extends Model
             self::STATUS_REJECTED => 'Ditolak',
         ];    
         return $labels[$this->status] ?? 'Tidak Diketahui';
+    }
+
+    public function userInfo()
+    {
+        if($this->user->employee) {
+            return $this->user->employee->name;
+        }
+        if($this->user->admin) {
+            return $this->user->admin->name;
+        }
+        return $this->user->email;
     }
 }

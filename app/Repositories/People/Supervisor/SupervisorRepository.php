@@ -80,11 +80,16 @@ class SupervisorRepository implements SupervisorRepositoryInterface
     public function delete($id)
     {
         $supervisor = Supervisor::with('user', 'file')->findOrFail($id);
+
         if ($supervisor->file) {
             $supervisor->file->delete();
         }
 
-        $supervisor->user?->delete();
-        return $supervisor->delete();
+        $user = $supervisor->user;
+        $supervisor->delete();
+        $user?->delete();
+
+        return true;
     }
+
 }

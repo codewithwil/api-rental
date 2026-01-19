@@ -78,11 +78,16 @@ class AdminRepository implements AdminRepositoryInterface
     public function delete($id)
     {
         $admin = Admin::with('user', 'file')->findOrFail($id);
+
         if ($admin->file) {
             $admin->file->delete();
         }
 
-        $admin->user?->delete();
-        return $admin->delete();
+        $user = $admin->user;
+        $admin->delete();
+        $user?->delete();
+
+        return true;
     }
+
 }

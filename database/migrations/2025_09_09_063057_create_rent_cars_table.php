@@ -15,15 +15,19 @@ return new class extends Migration
                 $table->engine = "InnoDB";   
                 $table->id('rentCarId');
                 $table->unsignedBigInteger('vehicle_id');
+                $table->string('owner', 75);
                 $table->string('renter_name', 75);
                 $table->text('renter_address')->nullable(false);
                 $table->string('renter_phone', 20)->nullable(false);
                 $table->date('startDate');
                 $table->date('endDate');
-                $table->decimal('pricePerDay', 12, 2); 
+                $table->decimal('pricePerDay', 40, 20);
                 $table->decimal('penalty', 5, 2)->nullable(false);
+                $table->decimal('ppn', 12, 2)->nullable(false);
+                $table->decimal('pph', 12, 2)->nullable(false);
                 $table->text('notes')->nullable(true);
-                $table->tinyInteger('status')->default(0);
+                $table->tinyInteger('type');
+                $table->tinyInteger('status')->default(1);
 
                 $table->timestamps();
                 $table->foreign('vehicle_id')->references('vehicleId')->on('vehicles')->onDelete('cascade');
